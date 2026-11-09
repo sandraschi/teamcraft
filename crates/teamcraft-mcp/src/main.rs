@@ -14,8 +14,18 @@ use std::process::ExitCode;
 use teamcraft_core::{dispatch, tools, Command, Confinement, Ctx, APP, VERSION};
 use teamcraft_store::Team;
 
+const AFTER_HELP: &str = "Typical week:
+  teamcraft clock-in JM; teamcraft clock-out JM --break 30
+  teamcraft time add JM --date 05.11.2026 --start 22:00 --end 06:00 --break 30
+  teamcraft confirm JM 2026-W45                # week becomes read-only
+  teamcraft azg --from 2026-11-01 --to 2026-11-30
+  teamcraft leave request JM vacation 21.12.2026 --to 31.12.2026; teamcraft leave approve 3
+  teamcraft timesheet JM 2026-11 --out D:\\Temp\\jm.csv
+  teamcraft capacity 2026-W46 --emit           # to taskcraft
+See HELP.md for workflows and docs/TOOLS.md for every MCP tool.";
+
 #[derive(Parser)]
-#[command(
+#[command(after_help = AFTER_HELP,
     name = "teamcraft",
     version,
     about = "Working time (AZG checks) and leave for a small Austrian team. Not payroll. CLI + MCP."
@@ -112,8 +122,11 @@ enum Cmd {
     },
     /// Fill an empty database with the labelled demo team.
     DemoSeed,
-    /// Print the MCP tool catalog.
-    Tools,
+    /// Print the MCP tool catalog (JSON, or markdown for docs/TOOLS.md).
+    Tools {
+        #[arg(long)]
+        markdown: bool,
+    },
     /// Run the MCP stdio server.
     Mcp,
 }
@@ -504,7 +517,7 @@ fn to_tool(cmd: Cmd) -> Result<(&'static str, Value), String> {
             obj(vec![("week", os(week)), ("emit", Some(json!(emit)))]),
         ),
         Cmd::DemoSeed => ("team_demo_seed", json!({})),
-        Cmd::Tools | Cmd::Mcp => return Err("not a tool verb".into()),
+        Cmd::Tools { .. } | Cmd::Mcp => return Err("not a tool verb".into()),
     })
 }
 
@@ -703,7 +716,11 @@ fn render(v: &Value) -> String {
 }
 fn main() -> ExitCode {
     let cli = Cli::parse();
-    if matches!(cli.cmd, Cmd::Tools) {
+    if let Cmd::Tools { markdown } = cli.cmd {
+        if markdown {
+            print!("{}", craft_biz::mcp::tools_markdown(APP, &tools()));
+            return ExitCode::SUCCESS;
+        }
         println!(
             "{}",
             serde_json::to_string_pretty(&tools()).unwrap_or_default()
@@ -783,6 +800,15 @@ fn main() -> ExitCode {
 mod tests {
     use super::*;
     use craft_biz::mcp::handle_line;
+
+    #[test]
+    fn tools_doc_is_current() {
+        let committed = include_str!("../../../docs/TOOLS.md");
+        assert!(
+            craft_biz::mcp::docs_in_sync(committed, &craft_biz::mcp::tools_markdown(APP, &tools())),
+            "docs/TOOLS.md is stale: run `just docs`"
+        );
+    }
 
     fn host() -> Host {
         let team = Team::open_in_memory().unwrap();

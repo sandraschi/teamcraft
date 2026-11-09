@@ -2,7 +2,12 @@
 
 Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks. One SQLite file, one binary that is both CLI and MCP server. Part of the back-office craft suite. **Not payroll**: no Lohnverrechnung, SV/LSt or ELDA.
 
-Status: **v0.1.0, Tier 1** (store + CLI + MCP, tested). No desktop window yet. Synthetic demo data only; not checked by a labour lawyer or Steuerberater.
+Status: **v0.1.1, Tier 1** (store + CLI + MCP, tested). No desktop window yet. Synthetic demo data only; not checked by a labour lawyer or Steuerberater.
+
+- How to use it day to day: [HELP.md](HELP.md)
+- What it is for and where it stops: [docs/PRD.md](docs/PRD.md)
+- Every MCP tool: [docs/TOOLS.md](docs/TOOLS.md) (generated, checked by a test)
+- Changes: [CHANGELOG.md](CHANGELOG.md)
 
 ## What it does
 
@@ -42,7 +47,7 @@ Database: `--db PATH`, else `$TEAMCRAFT_DB`, else `%LOCALAPPDATA%\teamcraft\team
 { "mcpServers": { "teamcraft": { "command": "D:/Dev/cargo-target/release/teamcraft.exe", "args": ["mcp", "--allow-path", "D:/Dev/teamcraft-files"] } } }
 ```
 
-25 tools, all `team_*`. Agent decisions (e.g. leave approval) are recorded with actor `agent`.
+25 tools, all `team_*`; see [docs/TOOLS.md](docs/TOOLS.md). Agent decisions (e.g. leave approval) are recorded with actor `agent`.
 
 ## Build
 
