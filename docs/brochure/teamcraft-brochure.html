@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TeamCraft v0.1.1 — Technical Brochure &amp; Operator Handbook</title>
+  <meta name="author" content="Sandra Schipal" />
+  <style>
+    @page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+      line-height: 1.55;
+      font-size: 10.2pt;
+      margin: 0;
+      padding: 0;
+    }
+    .cover {
+      background: linear-gradient(145deg, #090d16 0%, #0f172a 55%, #0c4a6e 100%);
+      color: #f8fafc;
+      padding: 44px 40px 48px 40px;
+      border-radius: 14px;
+      margin-bottom: 28px;
+      page-break-after: always;
+    }
+    .cover-kicker {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.18);
+      border: 1px solid #38bdf8;
+      color: #7dd3fc;
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+    }
+    .cover h1 {
+      font-size: 32pt;
+      line-height: 1.1;
+      margin: 0 0 12px 0;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+    .cover h2 {
+      font-size: 13.5pt;
+      font-weight: 400;
+      color: #bae6fd;
+      margin: 0 0 26px 0;
+    }
+    .cover-grid {
+      display: table;
+      width: 100%;
+      margin-top: 22px;
+      border-collapse: separate;
+      border-spacing: 10px;
+    }
+    .cover-stat {
+      display: table-cell;
+      width: 25%;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(125, 211, 252, 0.35);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .cover-stat .num {
+      font-size: 18pt;
+      font-weight: 800;
+      color: #38bdf8;
+      display: block;
+    }
+    .cover-stat .lbl {
+      font-size: 8pt;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .cover-footer {
+      margin-top: 28px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.3);
+      font-size: 9pt;
+      color: #94a3b8;
+    }
+    h2.section-title {
+      font-size: 15pt;
+      color: #0c4a6e;
+      border-bottom: 2px solid #0284c7;
+      padding-bottom: 5px;
+      margin-top: 24px;
+      margin-bottom: 10px;
+    }
+    h3 {
+      font-size: 11.5pt;
+      color: #0f172a;
+      margin-top: 16px;
+      margin-bottom: 6px;
+    }
+    p { margin: 0 0 9px 0; }
+    ul { margin: 6px 0 12px 0; padding-left: 20px; }
+    li { margin-bottom: 4px; }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px 0;
+      font-size: 9pt;
+    }
+    table.data-table th {
+      background: #0f172a;
+      color: #f8fafc;
+      text-align: left;
+      padding: 6px 8px;
+      font-weight: 700;
+    }
+    table.data-table td {
+      padding: 5px 8px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+    table.data-table tr:nth-child(even) td { background: #f8fafc; }
+    code, pre {
+      font-family: "Cascadia Code", "Consolas", "Courier New", monospace;
+      font-size: 8.8pt;
+    }
+    code {
+      background: #e2e8f0;
+      color: #0f172a;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 11px 14px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+    .page-break { page-break-before: always; }
+  </style>
+</head>
+<body>
+  <div class="cover">
+    <div class="cover-kicker">ArtCraft Fleet Technical Brochure &middot; Series #22</div>
+    <h1>TeamCraft v0.1.1</h1>
+    <h2>Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks. One SQLite file, one binary that is both CLI and MCP server. Part of the back-office craft suite. Not payroll: no Lohnverrechnung, SV/LSt or ELDA.</h2>
+
+    <svg viewBox="0 0 760 165" width="100%" height="165" xmlns="http://www.w3.org/2000/svg" style="margin: 10px 0 16px 0;">
+      <rect x="2" y="2" width="756" height="161" rx="12" fill="#0b1322" stroke="#38bdf8" stroke-width="1.5"/>
+      <rect x="24" y="22" width="200" height="120" rx="8" fill="#1e293b" stroke="#67e8f9" stroke-width="1.5"/>
+      <text x="124" y="52" fill="#67e8f9" font-size="13" font-weight="bold" text-anchor="middle">L3: teamcraft-app</text>
+      <text x="124" y="76" fill="#e2e8f0" font-size="10" text-anchor="middle">Native eframe/egui Studio</text>
+      <text x="124" y="98" fill="#94a3b8" font-size="9.5" text-anchor="middle">In-Process Core Dispatch</text>
+      <text x="124" y="118" fill="#34d399" font-size="9.5" text-anchor="middle">Zero HTTP / Port Overhead</text>
+
+      <rect x="280" y="22" width="200" height="120" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="380" y="52" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">L2: teamcraft-mcp</text>
+      <text x="380" y="76" fill="#e2e8f0" font-size="10" text-anchor="middle">CLI + Stdio MCP 2024-11-05</text>
+      <text x="380" y="98" fill="#94a3b8" font-size="9.5" text-anchor="middle">Human Verbs &amp; Agent Tools</text>
+      <text x="380" y="118" fill="#34d399" font-size="9.5" text-anchor="middle">Deterministic JSON Output</text>
+
+      <rect x="536" y="22" width="200" height="120" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+      <text x="636" y="52" fill="#34d399" font-size="13" font-weight="bold" text-anchor="middle">L1: teamcraft-core</text>
+      <text x="636" y="76" fill="#e2e8f0" font-size="10" text-anchor="middle">Single dispatch() Engine</text>
+      <text x="636" y="98" fill="#fcd34d" font-size="9.5" text-anchor="middle">deny(unwrap/expect/panic)</text>
+      <text x="636" y="118" fill="#94a3b8" font-size="9.5" text-anchor="middle">Pre-Write Backups &amp; Guards</text>
+
+      <line x1="224" y1="82" x2="280" y2="82" stroke="#38bdf8" stroke-width="2"/>
+      <line x1="480" y1="82" x2="536" y2="82" stroke="#10b981" stroke-width="2"/>
+    </svg>
+
+    <div class="cover-grid">
+      <div class="cover-stat">
+        <span class="num">v0.1.1</span>
+        <span class="lbl">Release Version</span>
+      </div>
+      <div class="cover-stat">
+        <span class="num">3 Crates</span>
+        <span class="lbl">Workspace Tiers</span>
+      </div>
+      <div class="cover-stat">
+        <span class="num">4222</span>
+        <span class="lbl">Pure-Rust LOC</span>
+      </div>
+      <div class="cover-stat">
+        <span class="num">6-Gate</span>
+        <span class="lbl">ArtCraft Verified</span>
+      </div>
+    </div>
+
+    <div class="cover-footer">
+      <strong>Repository:</strong> <code>D:\Dev\repos\teamcraft</code> &middot;
+      <strong>Standard:</strong> <code>CRAFT_BROCHURE_STANDARD.md</code> &middot;
+      <strong>Compiled via:</strong> <code>BookCraft v0.5.0</code>
+    </div>
+  </div>
+
+  <p>Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks. One SQLite file, one binary that is both CLI and MCP server. Part of the back-office craft suite. <strong>Not payroll</strong>: no Lohnverrechnung, SV/LSt or ELDA.</p>
+<p>Status: <strong>v0.1.1, Tier 1</strong> (store + CLI + MCP, tested). No desktop window yet. Synthetic demo data only; not checked by a labour lawyer or Steuerberater.</p>
+<ul>
+<li>How to use it day to day: HELP.md</li>
+<li>What it is for and where it stops: docs/PRD.md</li>
+<li>Every MCP tool: docs/TOOLS.md (generated, checked by a test)</li>
+<li>Changes: CHANGELOG.md</li>
+</ul>
+<h2 class="section-title">What it does</h2>
+<ul>
+<li><strong>Time:</strong> clock in/out or record entries (night shifts across midnight supported). No overlaps, one open entry per employee.</li>
+<li><strong>Week confirmation:</strong> an employee confirms an ISO week, then its entries are locked (in code and by SQLite triggers).</li>
+<li><strong>AZG check:</strong> more than 10 h a day (warning, needs an overtime arrangement), 12 h a day, 60 h a week, 48 h average over 17 weeks, 30 min break above 6 h (gaps of 10 min or more count), 11 h daily rest. Findings are recorded with minutes over/short; nothing is auto-corrected. Fixed data clears a finding but keeps it in the history.</li>
+<li><strong>Leave:</strong> vacation, sick, comp time, unpaid, other. Days counted Mon-Fri minus the 13 Austrian public holidays (Easter computed). Half days. Balance per year with pro rata entitlement in the start year, adjustments (carry-over), and an approval gate that refuses overdrawing unless forced.</li>
+<li><strong>Sick leave stores no reason</strong> (health data stays out, enforced in code and by the schema).</li>
+<li><strong>KV check:</strong> import your own KV minimum table (CSV) and compare each employee&#39;s gross pro rata to weekly hours. No KV figures ship with the app; they change every year.</li>
+<li><strong>Timesheet:</strong> monthly record per AZG section 26 (start, end, break, worked, absence, holiday, AZG flags), target vs worked balance, semicolon CSV for Excel.</li>
+<li><strong>Capacity:</strong> available hours per ISO week after holidays and approved leave; <code>--emit</code> sends <code>capacity.changed</code> to taskcraft over the craft-biz file bus.</li>
+</ul>
+<h2 class="section-title">Quick start</h2>
+<pre>
+teamcraft demo-seed                         # 3 mock employees, fictional KV table, deliberate AZG findings
+teamcraft violations
+teamcraft leave balance --year 2026
+teamcraft kv check --date 2026-11-09
+teamcraft clock-in JM
+teamcraft clock-out JM --break 30
+teamcraft time add JM --date 05.11.2026 --start 22:00 --end 06:00 --break 30   # night shift
+teamcraft leave request JM vacation 21.12.2026 --to 31.12.2026
+teamcraft leave approve 3
+teamcraft azg --from 2026-11-01 --to 2026-11-30
+teamcraft timesheet JM 2026-11 --out D:\Temp\jm-2026-11.csv
+teamcraft capacity 2026-W46 --emit         # taskcraft picks it up with `taskcraft inbox-drain`
+</pre>
+<p>KV CSV format (header optional, DE numbers): <code>kv;group;valid_from;monthly_min;weekly_hours</code>, e.g. <code>IT-KV;ST1;01.01.2026;2.450,00;38,5</code>.</p>
+<p>Database: <code>--db PATH</code>, else <code>$TEAMCRAFT_DB</code>, else <code>%LOCALAPPDATA%\teamcraft\teamcraft.db</code>.</p>
+<h2 class="section-title">MCP</h2>
+<pre>
+{ &quot;mcpServers&quot;: { &quot;teamcraft&quot;: { &quot;command&quot;: &quot;D:/Dev/cargo-target/release/teamcraft.exe&quot;, &quot;args&quot;: [&quot;mcp&quot;, &quot;--allow-path&quot;, &quot;D:/Dev/teamcraft-files&quot;] } } }
+</pre>
+<p>25 tools, all <code>team_*</code>; see docs/TOOLS.md. Agent decisions (e.g. leave approval) are recorded with actor <code>agent</code>.</p>
+<h2 class="section-title">Build</h2>
+<pre>
+just ci
+just build-release
+</pre>
+<p>Needs <code>../craft-biz</code> checked out next to this repo.</p>
+<h2 class="section-title">Not done (honest list)</h2>
+<ul>
+<li>No egui desktop app; no employee self-service UI.</li>
+<li>Timesheet PDF not implemented (CSV only).</li>
+<li>AZG: general rules only. No KV-specific extensions (e.g. 4-day week, Gleitzeit agreements, on-call), no night-work or Sunday-rest (ARG) checks, no youth employment rules (KJBG).</li>
+<li>Leave entitlement: pro rata in the start year; the Urlaubsgesetz rule (accrual during the first 6 months) and the 30-days-after-25-years increase are not modelled. Part-time staff with fewer than 5 working days are approximated on a 5-day basis.</li>
+<li>Capacity assumes a 5-day week.</li>
+</ul>
+
+  <div class="page-break"></div><h2 class="section-title">Product Requirements &amp; Architecture Specification</h2><h2 class="section-title">What it is</h2>
+<p>Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks, a KV pay floor check and team capacity for planning. Not payroll. Pure Rust, ArtCraft pattern. Suite plan: <code>BACKOFFICE_CRAFT_SUITE.md</code>, section 4.3.</p>
+<h2 class="section-title">Users</h2>
+<ul>
+<li>The employer of 1-10 people who must keep AZG records and approve leave.</li>
+<li>Employees recording and confirming their own time (CLI today, egui later).</li>
+<li>Agents over MCP: check AZG compliance, prepare timesheets, answer &quot;who is available next week&quot;. Agent decisions are recorded with actor <code>agent</code>.</li>
+</ul>
+<h2 class="section-title">Jobs</h2>
+<p>1. Keep a working-time record that satisfies AZG section 26 and cannot be quietly changed after confirmation.</p>
+<p>2. Spot AZG violations before an inspection does.</p>
+<p>3. Handle leave with correct day counting and balances.</p>
+<p>4. Make sure nobody is paid below the KV minimum.</p>
+<p>5. Feed real availability into project planning (taskcraft).</p>
+<h2 class="section-title">Today (v0.1.0)</h2>
+<ul>
+<li>Employees (work fields only), clock in/out, manual entries incl. night shifts, overlap guard.</li>
+<li>Week confirmation with trigger-enforced locks.</li>
+<li>AZG engine: 10 h warning, 12 h, 60 h/week, 48 h average over 17 weeks, 30 min break above 6 h, 11 h rest; findings recorded, cleared but kept.</li>
+<li>Leave in half-days against Austrian public holidays, pro rata entitlement, adjustments, approval gate, sick leave without reason.</li>
+<li>KV import and pro rata check; monthly timesheet CSV with target and balance; weekly capacity sent to taskcraft (verified end to end).</li>
+<li>25 MCP tools (TOOLS.md, generated and test-checked).</li>
+</ul>
+<h2 class="section-title">Boundaries</h2>
+<ul>
+<li>No Lohnverrechnung, SV/LSt, ELDA, payslips.</li>
+<li>No health data: sick leave stores day counts only.</li>
+<li>No KV figures shipped; the user imports and owns the table.</li>
+<li>Rules are the general AZG; not a substitute for advice from a labour lawyer or payroll office.</li>
+</ul>
+<h2 class="section-title">Gaps (honest)</h2>
+<ul>
+<li>No egui window; no employee self-service UI.</li>
+<li>AZG: no KV-specific extensions (Gleitzeit, 4-day week), no ARG Sunday/night rules, no KJBG.</li>
+<li>Urlaubsgesetz accrual in the first 6 months and the 30-day entitlement after 25 years are not modelled; part-timers are approximated on a 5-day basis.</li>
+<li>Timesheet CSV only (no PDF).</li>
+<li>Rules not reviewed by a professional; synthetic data only.</li>
+</ul>
+<h2 class="section-title">Next</h2>
+<p>1. egui app: clock panel, week view with AZG flags, leave calendar, approval inbox.</p>
+<p>2. Labour-law review; Gleitzeit as an opt-in profile.</p>
+<p>3. Timesheet PDF via pdfcraft.</p>
+
+  <div class="page-break"></div><h2 class="section-title">Complete MCP Tool &amp; CLI Verb Reference</h2><p>Generated by <code>teamcraft tools --markdown</code>. Do not edit by hand: a test fails when this file</p>
+<p>is out of date. Every tool is also a CLI verb (<code>teamcraft --help</code>). Dotted names (<code>app.verb</code>) are accepted.</p>
+<table class="data-table"><thead><tr>
+<th>Tool</th>
+<th>What it does</th>
+<th>Required</th>
+<th>Optional</th>
+</tr></thead><tbody>
+<tr>
+<td><code>team_status</code></td>
+<td>Counts (active employees, clocked in, open leave requests, active AZG findings) and who is clocked in now.</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>team_employee_add</code></td>
+<td>Add an employee. Only work-relevant fields; no SV number, address or bank data.</td>
+<td><code>code</code>, <code>name</code></td>
+<td><code>kv_group</code>, <code>kv_name</code>, <code>leave_days</code>, <code>monthly_gross</code>, <code>start_date</code>, <code>weekly_hours</code></td>
+</tr>
+<tr>
+<td><code>team_employee_list</code></td>
+<td>List employees.</td>
+<td>-</td>
+<td><code>include_inactive</code></td>
+</tr>
+<tr>
+<td><code>team_employee_update</code></td>
+<td>Change employee fields; null clears kv_name/kv_group/monthly_gross. active=false retires an employee.</td>
+<td><code>code</code></td>
+<td><code>active</code>, <code>kv_group</code>, <code>kv_name</code>, <code>leave_days</code>, <code>monthly_gross</code>, <code>name</code>, <code>weekly_hours</code></td>
+</tr>
+<tr>
+<td><code>team_clock_in</code></td>
+<td>Start a time entry (one open entry per employee).</td>
+<td><code>employee</code></td>
+<td><code>at</code>, <code>note</code></td>
+</tr>
+<tr>
+<td><code>team_clock_out</code></td>
+<td>Close the open entry with break minutes.</td>
+<td><code>employee</code></td>
+<td><code>at</code>, <code>break_minutes</code></td>
+</tr>
+<tr>
+<td><code>team_time_add</code></td>
+<td>Record a past entry. start/end as HH:MM with date, or full date-times. An end before the start on the same date means a night shift.</td>
+<td><code>employee</code>, <code>start</code>, <code>end</code></td>
+<td><code>break_minutes</code>, <code>date</code>, <code>note</code></td>
+</tr>
+<tr>
+<td><code>team_time_list</code></td>
+<td>Entries and daily totals in a date range.</td>
+<td><code>from</code>, <code>to</code></td>
+<td><code>employee</code></td>
+</tr>
+<tr>
+<td><code>team_time_delete</code></td>
+<td>Delete an entry (refused in confirmed weeks).</td>
+<td><code>id</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>team_week_confirm</code></td>
+<td>Employee confirms an ISO week (2026-W45). Its entries become read-only.</td>
+<td><code>employee</code>, <code>week</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>team_azg_check</code></td>
+<td>Check working-time law (10h/12h daily, 60h weekly, 48h 17-week average, 30 min break above 6h, 11h rest). Findings are recorded, never auto-corrected.</td>
+<td><code>from</code>, <code>to</code></td>
+<td><code>employee</code></td>
+</tr>
+<tr>
+<td><code>team_violations</code></td>
+<td>Recorded AZG findings; cleared ones only with include_cleared.</td>
+<td>-</td>
+<td><code>employee</code>, <code>include_cleared</code></td>
+</tr>
+<tr>
+<td><code>team_leave_request</code></td>
+<td>Request leave. Days counted Mon-Fri minus Austrian public holidays. Sick leave is recorded directly and takes no note (no health data).</td>
+<td><code>employee</code>, <code>kind</code>, <code>from</code></td>
+<td><code>half_day</code>, <code>note</code>, <code>to</code></td>
+</tr>
+<tr>
+<td><code>team_leave_decide</code></td>
+<td>Approve or reject a request. Approving vacation beyond the balance needs force=true.</td>
+<td><code>id</code>, <code>approve</code></td>
+<td><code>force</code></td>
+</tr>
+<tr>
+<td><code>team_leave_cancel</code></td>
+<td>Cancel a requested or approved leave.</td>
+<td><code>id</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>team_leave_list</code></td>
+<td>Leaves, optionally by employee, year and status.</td>
+<td>-</td>
+<td><code>employee</code>, <code>status</code>, <code>year</code></td>
+</tr>
+<tr>
+<td><code>team_leave_balance</code></td>
+<td>Vacation entitlement (pro rata in the start year), taken, pending, remaining; sick/comp/unpaid day counts.</td>
+<td>-</td>
+<td><code>employee</code>, <code>year</code></td>
+</tr>
+<tr>
+<td><code>team_leave_adjust</code></td>
+<td>Add or subtract vacation days for a year (carry-over etc.), with a reason.</td>
+<td><code>employee</code>, <code>year</code>, <code>days</code>, <code>reason</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>team_holidays</code></td>
+<td>Austrian national public holidays of a year.</td>
+<td>-</td>
+<td><code>year</code></td>
+</tr>
+<tr>
+<td><code>team_kv_import</code></td>
+<td>Import KV minimum wages from CSV kv;group;valid_from;monthly_min;weekly_hours. The table is yours: no KV figures ship with the app.</td>
+<td><code>path</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>team_kv_list</code></td>
+<td>KV minimum table.</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>team_kv_check</code></td>
+<td>Compare each employee&#39;s gross with the KV minimum valid on a date, pro rata to weekly hours.</td>
+<td>-</td>
+<td><code>date</code></td>
+</tr>
+<tr>
+<td><code>team_timesheet</code></td>
+<td>Monthly working-time record (AZG section 26): per day start/end/break/worked/absence/holiday/AZG flags, worked vs target. path writes a semicolon CSV.</td>
+<td><code>employee</code>, <code>month</code></td>
+<td><code>path</code></td>
+</tr>
+<tr>
+<td><code>team_capacity</code></td>
+<td>Available hours per employee for an ISO week after holidays and approved leave. emit=true sends capacity.changed to taskcraft.</td>
+<td>-</td>
+<td><code>emit</code>, <code>week</code></td>
+</tr>
+<tr>
+<td><code>team_demo_seed</code></td>
+<td>Fill an EMPTY database with a labelled demo team, fictional KV table and deliberate AZG findings.</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody></table>
+
+</body>
+</html>
