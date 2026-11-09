@@ -1,0 +1,17 @@
+[package]
+name = "teamcraft-core"
+description = "teamcraft L1: command bus, AZG engine, timesheets, KV check, capacity, demo seed."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+teamcraft-store = { path = "../teamcraft-store" }
+craft-biz.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+
+[lints]
+workspace = true
