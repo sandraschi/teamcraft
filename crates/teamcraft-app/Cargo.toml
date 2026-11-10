@@ -1,0 +1,21 @@
+[package]
+name = "teamcraft-app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+teamcraft-core = { path = "../teamcraft-core" }
+teamcraft-store = { path = "../teamcraft-store" }
+craft-biz = { workspace = true }
+craft-biz-ui = { workspace = true }
+eframe = { workspace = true }
+egui = { workspace = true }
+clap = { workspace = true }
+chrono = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[lints]
+workspace = true
