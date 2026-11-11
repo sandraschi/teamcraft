@@ -6,10 +6,16 @@ use clap::Parser;
 use eframe::egui::{self, Color32, RichText};
 use std::path::PathBuf;
 use teamcraft_core::azg_check;
-use teamcraft_store::{fmt_hm, Employee, Leave, LeaveKind, LeaveStatus, Team, TimeEntry, Violation};
+use teamcraft_store::{
+    fmt_hm, Employee, Leave, LeaveKind, LeaveStatus, Team, TimeEntry, Violation,
+};
 
 #[derive(Parser, Debug)]
-#[command(name = "teamcraft-app", version, about = "Desktop UI for Austrian working time (AZG) & leave management")]
+#[command(
+    name = "teamcraft-app",
+    version,
+    about = "Desktop UI for Austrian working time (AZG) & leave management"
+)]
 struct Cli {
     /// Database file path.
     #[arg(long)]
@@ -248,8 +254,16 @@ impl eframe::App for AppState {
 
         // High-level KPI Stats Bar
         let active_count = self.employees.iter().filter(|e| e.active).count();
-        let open_viols = self.violations.iter().filter(|v| v.severity != "cleared").count();
-        let pending_leaves = self.leaves.iter().filter(|l| l.status == LeaveStatus::Requested).count();
+        let open_viols = self
+            .violations
+            .iter()
+            .filter(|v| v.severity != "cleared")
+            .count();
+        let pending_leaves = self
+            .leaves
+            .iter()
+            .filter(|l| l.status == LeaveStatus::Requested)
+            .count();
 
         ui.horizontal(|ui| {
             ui.group(|ui| {
@@ -292,16 +306,37 @@ impl eframe::App for AppState {
 
         // Tab Navigation & Employee Selector
         ui.horizontal(|ui| {
-            if ui.selectable_label(self.current_tab == ActiveTab::Timesheet, "📅 Timesheet Grid").clicked() {
+            if ui
+                .selectable_label(
+                    self.current_tab == ActiveTab::Timesheet,
+                    "📅 Timesheet Grid",
+                )
+                .clicked()
+            {
                 self.current_tab = ActiveTab::Timesheet;
             }
-            if ui.selectable_label(self.current_tab == ActiveTab::AzgCompliance, "⚖ AZG Compliance Cockpit").clicked() {
+            if ui
+                .selectable_label(
+                    self.current_tab == ActiveTab::AzgCompliance,
+                    "⚖ AZG Compliance Cockpit",
+                )
+                .clicked()
+            {
                 self.current_tab = ActiveTab::AzgCompliance;
             }
-            if ui.selectable_label(self.current_tab == ActiveTab::AbsenceLeave, "🏖 Absence & Leave").clicked() {
+            if ui
+                .selectable_label(
+                    self.current_tab == ActiveTab::AbsenceLeave,
+                    "🏖 Absence & Leave",
+                )
+                .clicked()
+            {
                 self.current_tab = ActiveTab::AbsenceLeave;
             }
-            if ui.selectable_label(self.current_tab == ActiveTab::Roster, "👥 Employee Roster").clicked() {
+            if ui
+                .selectable_label(self.current_tab == ActiveTab::Roster, "👥 Employee Roster")
+                .clicked()
+            {
                 self.current_tab = ActiveTab::Roster;
             }
 
@@ -311,12 +346,21 @@ impl eframe::App for AppState {
             egui::ComboBox::from_id_salt("emp_selector")
                 .selected_text(self.selected_employee.as_deref().unwrap_or("All Employees"))
                 .show_ui(ui, |ui| {
-                    if ui.selectable_value(&mut switch_code, Some(None), "All Employees").clicked() {
+                    if ui
+                        .selectable_value(&mut switch_code, Some(None), "All Employees")
+                        .clicked()
+                    {
                         switch_code = Some(None);
                     }
                     for emp in &self.employees {
                         let label = format!("{} ({})", emp.name, emp.code);
-                        if ui.selectable_label(self.selected_employee.as_deref() == Some(&emp.code), label).clicked() {
+                        if ui
+                            .selectable_label(
+                                self.selected_employee.as_deref() == Some(&emp.code),
+                                label,
+                            )
+                            .clicked()
+                        {
                             switch_code = Some(Some(emp.code.clone()));
                         }
                     }
@@ -380,45 +424,47 @@ impl AppState {
         ui.add_space(8.0);
 
         // Time Entries Table
-        egui::ScrollArea::vertical().id_salt("timesheet_scroll").show(ui, |ui| {
-            egui::Grid::new("timesheet_grid")
-                .striped(true)
-                .min_col_width(90.0)
-                .show(ui, |ui| {
-                    ui.strong("ID");
-                    ui.strong("Employee");
-                    ui.strong("Start");
-                    ui.strong("End");
-                    ui.strong("Break");
-                    ui.strong("Worked");
-                    ui.strong("Note");
-                    ui.strong("Status");
-                    ui.end_row();
-
-                    for entry in &self.time_entries {
-                        ui.label(format!("#{}", entry.id));
-                        ui.label(&entry.employee);
-                        ui.label(entry.start.format("%Y-%m-%d %H:%M").to_string());
-                        ui.label(
-                            entry
-                                .end
-                                .map(|e| e.format("%H:%M").to_string())
-                                .unwrap_or_else(|| "IN PROGRESS".to_string()),
-                        );
-                        ui.label(format!("{}m", entry.break_minutes));
-                        ui.label(entry.minutes.map(fmt_hm).unwrap_or_else(|| "—".into()));
-                        ui.label(&entry.note);
-                        if entry.locked {
-                            render_badge(ui, "Locked", Color32::GRAY);
-                        } else if entry.end.is_none() {
-                            render_badge(ui, "Clocked In", Color32::from_rgb(56, 189, 248));
-                        } else {
-                            render_badge(ui, "Logged", Color32::from_rgb(34, 197, 94));
-                        }
+        egui::ScrollArea::vertical()
+            .id_salt("timesheet_scroll")
+            .show(ui, |ui| {
+                egui::Grid::new("timesheet_grid")
+                    .striped(true)
+                    .min_col_width(90.0)
+                    .show(ui, |ui| {
+                        ui.strong("ID");
+                        ui.strong("Employee");
+                        ui.strong("Start");
+                        ui.strong("End");
+                        ui.strong("Break");
+                        ui.strong("Worked");
+                        ui.strong("Note");
+                        ui.strong("Status");
                         ui.end_row();
-                    }
-                });
-        });
+
+                        for entry in &self.time_entries {
+                            ui.label(format!("#{}", entry.id));
+                            ui.label(&entry.employee);
+                            ui.label(entry.start.format("%Y-%m-%d %H:%M").to_string());
+                            ui.label(
+                                entry
+                                    .end
+                                    .map(|e| e.format("%H:%M").to_string())
+                                    .unwrap_or_else(|| "IN PROGRESS".to_string()),
+                            );
+                            ui.label(format!("{}m", entry.break_minutes));
+                            ui.label(entry.minutes.map(fmt_hm).unwrap_or_else(|| "-".into()));
+                            ui.label(&entry.note);
+                            if entry.locked {
+                                render_badge(ui, "Locked", Color32::GRAY);
+                            } else if entry.end.is_none() {
+                                render_badge(ui, "Clocked In", Color32::from_rgb(56, 189, 248));
+                            } else {
+                                render_badge(ui, "Logged", Color32::from_rgb(34, 197, 94));
+                            }
+                            ui.end_row();
+                        }
+                    });
+            });
     }
 
     fn render_azg(&mut self, ui: &mut egui::Ui) {
@@ -437,37 +483,39 @@ impl AppState {
 
         ui.add_space(8.0);
 
-        egui::ScrollArea::vertical().id_salt("azg_scroll").show(ui, |ui| {
-            egui::Grid::new("azg_grid")
-                .striped(true)
-                .min_col_width(100.0)
-                .show(ui, |ui| {
-                    ui.strong("ID");
-                    ui.strong("Date");
-                    ui.strong("Employee");
-                    ui.strong("Kind");
-                    ui.strong("Severity");
-                    ui.strong("Minutes Excess/Deficit");
-                    ui.strong("Detail");
-                    ui.end_row();
-
-                    for v in &self.violations {
-                        ui.label(format!("#{}", v.id));
-                        ui.label(v.date.format("%Y-%m-%d").to_string());
-                        ui.label(&v.employee);
-                        ui.label(&v.kind);
-                        let color = match v.severity.as_str() {
-                            "danger" | "critical" => Color32::from_rgb(239, 68, 68),
-                            "warning" | "warn" => Color32::from_rgb(245, 158, 11),
-                            _ => Color32::GRAY,
-                        };
-                        render_badge(ui, &v.severity, color);
-                        ui.label(fmt_hm(v.minutes));
-                        ui.label(&v.detail);
+        egui::ScrollArea::vertical()
+            .id_salt("azg_scroll")
+            .show(ui, |ui| {
+                egui::Grid::new("azg_grid")
+                    .striped(true)
+                    .min_col_width(100.0)
+                    .show(ui, |ui| {
+                        ui.strong("ID");
+                        ui.strong("Date");
+                        ui.strong("Employee");
+                        ui.strong("Kind");
+                        ui.strong("Severity");
+                        ui.strong("Minutes Excess/Deficit");
+                        ui.strong("Detail");
                         ui.end_row();
-                    }
-                });
-        });
+
+                        for v in &self.violations {
+                            ui.label(format!("#{}", v.id));
+                            ui.label(v.date.format("%Y-%m-%d").to_string());
+                            ui.label(&v.employee);
+                            ui.label(&v.kind);
+                            let color = match v.severity.as_str() {
+                                "danger" | "critical" => Color32::from_rgb(239, 68, 68),
+                                "warning" | "warn" => Color32::from_rgb(245, 158, 11),
+                                _ => Color32::GRAY,
+                            };
+                            render_badge(ui, &v.severity, color);
+                            ui.label(fmt_hm(v.minutes));
+                            ui.label(&v.detail);
+                            ui.end_row();
+                        }
+                    });
+            });
     }
 
     fn render_absence(&mut self, ui: &mut egui::Ui) {
@@ -495,51 +543,57 @@ impl AppState {
 
         let mut decide_action = None;
 
-        egui::ScrollArea::vertical().id_salt("leave_scroll").show(ui, |ui| {
-            egui::Grid::new("leave_grid")
-                .striped(true)
-                .min_col_width(90.0)
-                .show(ui, |ui| {
-                    ui.strong("ID");
-                    ui.strong("Employee");
-                    ui.strong("Kind");
-                    ui.strong("Period");
-                    ui.strong("Days");
-                    ui.strong("Status");
-                    ui.strong("Note");
-                    ui.strong("Actions");
-                    ui.end_row();
-
-                    for l in &self.leaves {
-                        ui.label(format!("#{}", l.id));
-                        ui.label(&l.employee);
-                        render_badge(ui, l.kind.as_str(), Color32::from_rgb(56, 189, 248));
-                        ui.label(format!("{} - {}", l.from.format("%d.%m"), l.to.format("%d.%m.%Y")));
-                        ui.label(format!("{:.1}", l.days));
-
-                        let color = match l.status {
-                            LeaveStatus::Approved => Color32::from_rgb(34, 197, 94),
-                            LeaveStatus::Requested => Color32::from_rgb(245, 158, 11),
-                            LeaveStatus::Rejected => Color32::from_rgb(239, 68, 68),
-                            LeaveStatus::Cancelled => Color32::GRAY,
-                        };
-                        render_badge(ui, l.status.as_str(), color);
-                        ui.label(&l.note);
-
-                        ui.horizontal(|ui| {
-                            if l.status == LeaveStatus::Requested {
-                                if ui.small_button("✔ Approve").clicked() {
-                                    decide_action = Some((l.id, true));
-                                }
-                                if ui.small_button("✖ Reject").clicked() {
-                                    decide_action = Some((l.id, false));
-                                }
-                            }
-                        });
+        egui::ScrollArea::vertical()
+            .id_salt("leave_scroll")
+            .show(ui, |ui| {
+                egui::Grid::new("leave_grid")
+                    .striped(true)
+                    .min_col_width(90.0)
+                    .show(ui, |ui| {
+                        ui.strong("ID");
+                        ui.strong("Employee");
+                        ui.strong("Kind");
+                        ui.strong("Period");
+                        ui.strong("Days");
+                        ui.strong("Status");
+                        ui.strong("Note");
+                        ui.strong("Actions");
                         ui.end_row();
-                    }
-                });
-        });
+
+                        for l in &self.leaves {
+                            ui.label(format!("#{}", l.id));
+                            ui.label(&l.employee);
+                            render_badge(ui, l.kind.as_str(), Color32::from_rgb(56, 189, 248));
+                            ui.label(format!(
+                                "{} - {}",
+                                l.from.format("%d.%m"),
+                                l.to.format("%d.%m.%Y")
+                            ));
+                            ui.label(format!("{:.1}", l.days));
+
+                            let color = match l.status {
+                                LeaveStatus::Approved => Color32::from_rgb(34, 197, 94),
+                                LeaveStatus::Requested => Color32::from_rgb(245, 158, 11),
+                                LeaveStatus::Rejected => Color32::from_rgb(239, 68, 68),
+                                LeaveStatus::Cancelled => Color32::GRAY,
+                            };
+                            render_badge(ui, l.status.as_str(), color);
+                            ui.label(&l.note);
+
+                            ui.horizontal(|ui| {
+                                if l.status == LeaveStatus::Requested {
+                                    if ui.small_button("✔ Approve").clicked() {
+                                        decide_action = Some((l.id, true));
+                                    }
+                                    if ui.small_button("✖ Reject").clicked() {
+                                        decide_action = Some((l.id, false));
+                                    }
+                                }
+                            });
+                            ui.end_row();
+                        }
+                    });
+            });
 
         if let Some((id, approve)) = decide_action {
             self.decide_leave(id, approve);
@@ -551,42 +605,44 @@ impl AppState {
 
         ui.add_space(8.0);
 
-        egui::ScrollArea::vertical().id_salt("roster_scroll").show(ui, |ui| {
-            egui::Grid::new("roster_grid")
-                .striped(true)
-                .min_col_width(110.0)
-                .show(ui, |ui| {
-                    ui.strong("Code");
-                    ui.strong("Full Name");
-                    ui.strong("Weekly Hours");
-                    ui.strong("Annual Leave");
-                    ui.strong("Start Date");
-                    ui.strong("KV Group");
-                    ui.strong("Monthly Gross");
-                    ui.strong("Status");
-                    ui.end_row();
-
-                    for emp in &self.employees {
-                        ui.label(&emp.code);
-                        ui.label(&emp.name);
-                        ui.label(format!("{:.1}h", emp.weekly_minutes as f64 / 60.0));
-                        ui.label(format!("{} days", emp.leave_days_per_year));
-                        ui.label(emp.start_date.format("%Y-%m-%d").to_string());
-                        ui.label(emp.kv_group.as_deref().unwrap_or("—"));
-                        let gross_str = emp
-                            .monthly_gross_cents
-                            .map(|c| format!("€{:.2}", c as f64 / 100.0))
-                            .unwrap_or_else(|| "—".to_string());
-                        ui.label(gross_str);
-                        if emp.active {
-                            render_badge(ui, "Active", Color32::from_rgb(34, 197, 94));
-                        } else {
-                            render_badge(ui, "Inactive", Color32::GRAY);
-                        }
+        egui::ScrollArea::vertical()
+            .id_salt("roster_scroll")
+            .show(ui, |ui| {
+                egui::Grid::new("roster_grid")
+                    .striped(true)
+                    .min_col_width(110.0)
+                    .show(ui, |ui| {
+                        ui.strong("Code");
+                        ui.strong("Full Name");
+                        ui.strong("Weekly Hours");
+                        ui.strong("Annual Leave");
+                        ui.strong("Start Date");
+                        ui.strong("KV Group");
+                        ui.strong("Monthly Gross");
+                        ui.strong("Status");
                         ui.end_row();
-                    }
-                });
-        });
+
+                        for emp in &self.employees {
+                            ui.label(&emp.code);
+                            ui.label(&emp.name);
+                            ui.label(format!("{:.1}h", emp.weekly_minutes as f64 / 60.0));
+                            ui.label(format!("{} days", emp.leave_days_per_year));
+                            ui.label(emp.start_date.format("%Y-%m-%d").to_string());
+                            ui.label(emp.kv_group.as_deref().unwrap_or("-"));
+                            let gross_str = emp
+                                .monthly_gross_cents
+                                .map(|c| format!("€{:.2}", c as f64 / 100.0))
+                                .unwrap_or_else(|| "-".to_string());
+                            ui.label(gross_str);
+                            if emp.active {
+                                render_badge(ui, "Active", Color32::from_rgb(34, 197, 94));
+                            } else {
+                                render_badge(ui, "Inactive", Color32::GRAY);
+                            }
+                            ui.end_row();
+                        }
+                    });
+            });
     }
 }
 
