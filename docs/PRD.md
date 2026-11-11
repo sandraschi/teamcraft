@@ -47,3 +47,21 @@ Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks,
 1. egui app: clock panel, week view with AZG flags, leave calendar, approval inbox.
 2. Labour-law review; Gleitzeit as an opt-in profile.
 3. Timesheet PDF via pdfcraft.
+
+## UI/UX Architecture & Menu Bar Standard
+
+In accordance with [`CRAFT_MENU_BAR_STANDARD.md`](../../mcp-central-docs/standards/rust-artcraft/CRAFT_MENU_BAR_STANDARD.md):
+- **Pattern 2 (Viewport-Centric Craft Workstation):** Persistent timesheet week grid and team availability calendar with AZG compliance badges. Top quick button row acts as accelerators into the `View` menu. To add a new timesheet view or team schedule:
+  1. Register a visibility toggle in the `View` or `Window` menu.
+  2. Add an entry in the sidebar Employee / Calendar toolbox.
+  3. Wire the action directly into the universal `Command::dispatch` bus.
+- **Top Menu Bar Hierarchy:**
+  - `File`: New Timesheet Period (`Ctrl+N`), Import KV Data (`Ctrl+O`), Open Recent ▸, Save Timesheet (`Ctrl+S`), Export Timesheet / CSV (`Ctrl+E`), Close (`Ctrl+W`), Quit (`Ctrl+Q`).
+  - `Edit`: Undo (`Ctrl+Z`), Redo (`Ctrl+Y`), Cut, Copy, Paste, Select All, Preferences (`Ctrl+,`).
+  - `View`: Week Timesheet Grid, Employee Directory, Leave & Absence Calendar, AZG Compliance Audit, Capacity Timeline, Theme (`Dark`/`Light`).
+  - `Insert`: Clock In/Out (`Ctrl+Shift+C`), Add Manual Time Entry, Request Leave, Add Employee.
+  - `Modify`: Edit Entry Notes, Approve Leave Request, Lock / Confirm Week, Adjust Balance.
+  - `Commands`: Run AZG Violation Scan, Check KV Minimum Pay Floors, Emit Capacity to TaskCraft, Calculate Vacation Accruals.
+  - `Window`: Reset Layout, Timesheet Viewport, Leave Inspector, AZG Findings Dock.
+  - `Help` (Mandatory 5-Dialog Suite): `Command Palette...` (`Ctrl+K`), `Keyboard Shortcuts...` (`F1`), `Project Files & Docs...`, `Licenses & Notices...`, `About TeamCraft`.
+- **Behavioral Mechanics:** Smooth `switch_on_hover` between top-level menus, zero-unsafe immediate-mode rendering, and headless `--smoke` parity.
