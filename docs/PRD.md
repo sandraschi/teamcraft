@@ -7,7 +7,7 @@ Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks,
 ## Users
 
 - The employer of 1-10 people who must keep AZG records and approve leave.
-- Employees recording and confirming their own time (CLI today, egui later).
+- Employees recording and confirming their own time (CLI and desktop window).
 - Agents over MCP: check AZG compliance, prepare timesheets, answer "who is available next week". Agent decisions are recorded with actor `agent`.
 
 ## Jobs
@@ -18,7 +18,11 @@ Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks,
 4. Make sure nobody is paid below the KV minimum.
 5. Feed real availability into project planning (taskcraft).
 
-## Today (v0.1.0)
+## Today (v0.2.0)
+
+- Desktop window `teamcraft-app` on the suite frame: time clock, monthly timesheet with AZG flags and balance to date, team absence calendar, leave request board (drag decides), balances, capacity, AZG findings, team with KV check. Every tool reachable (coverage test), high-contrast themes, Ctrl+wheel zoom, DE/EN.
+
+Core (since v0.1.0):
 
 - Employees (work fields only), clock in/out, manual entries incl. night shifts, overlap guard.
 - Week confirmation with trigger-enforced locks.
@@ -36,7 +40,9 @@ Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks,
 
 ## Gaps (honest)
 
-- No egui window; no employee self-service UI.
+- No employee self-service login; one window for the record keeper.
+- No menu bar yet (see the menu bar section below: a target, not implemented).
+- AZG finding details are English text from the engine.
 - AZG: no KV-specific extensions (Gleitzeit, 4-day week), no ARG Sunday/night rules, no KJBG.
 - Urlaubsgesetz accrual in the first 6 months and the 30-day entitlement after 25 years are not modelled; part-timers are approximated on a 5-day basis.
 - Timesheet CSV only (no PDF).
@@ -44,11 +50,13 @@ Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks,
 
 ## Next
 
-1. egui app: clock panel, week view with AZG flags, leave calendar, approval inbox.
+1. Menu bar and help suite per the craft menu bar standard.
 2. Labour-law review; Gleitzeit as an opt-in profile.
 3. Timesheet PDF via pdfcraft.
 
 ## UI/UX Architecture & Menu Bar Standard
+
+Status: target, not implemented in v0.2.0. The window today uses the suite frame (sidebar views, top actions, Ctrl+K command palette).
 
 In accordance with [`CRAFT_MENU_BAR_STANDARD.md`](../../mcp-central-docs/standards/rust-artcraft/CRAFT_MENU_BAR_STANDARD.md):
 - **Pattern 2 (Viewport-Centric Craft Workstation):** Persistent timesheet week grid and team availability calendar with AZG compliance badges. Top quick button row acts as accelerators into the `View` menu. To add a new timesheet view or team schedule:

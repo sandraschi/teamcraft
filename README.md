@@ -1,8 +1,14 @@
 # teamcraft
 
+![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)
+![Rust 1.90+](https://img.shields.io/badge/rust-1.90%2B-orange?logo=rust)
+![MCP stdio](https://img.shields.io/badge/MCP-stdio-purple)
+![ArtCraft harness](https://img.shields.io/badge/ArtCraft-harness-green)
+![SQLite](https://img.shields.io/badge/sqlite-local-lightgrey?logo=sqlite)
+
 Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks. One SQLite file, one binary that is both CLI and MCP server. Part of the back-office craft suite. **Not payroll**: no Lohnverrechnung, SV/LSt or ELDA.
 
-Status: **v0.1.1, Tier 1** (store + CLI + MCP, tested). No desktop window yet. Synthetic demo data only; not checked by a labour lawyer or Steuerberater.
+Status: **v0.2.0** (store + CLI + MCP + desktop window, tested). Synthetic demo data only; not checked by a labour lawyer or Steuerberater.
 
 - How to use it day to day: [HELP.md](HELP.md)
 - What it is for and where it stops: [docs/PRD.md](docs/PRD.md)
@@ -19,6 +25,28 @@ Status: **v0.1.1, Tier 1** (store + CLI + MCP, tested). No desktop window yet. S
 - **KV check:** import your own KV minimum table (CSV) and compare each employee's gross pro rata to weekly hours. No KV figures ship with the app; they change every year.
 - **Timesheet:** monthly record per AZG section 26 (start, end, break, worked, absence, holiday, AZG flags), target vs worked balance, semicolon CSV for Excel.
 - **Capacity:** available hours per ISO week after holidays and approved leave; `--emit` sends `capacity.changed` to taskcraft over the craft-biz file bus.
+
+## Desktop window
+
+`teamcraft-app` is laid out like a small-team HR tool (Personio, Clockodo):
+
+- **Time clock:** who is in, clock in/out per person, today's hours, leave requests waiting for a decision (approve/reject inline).
+- **Timesheet:** monthly AZG section 26 record per employee with AZG flags per day; worked, target and balance (target to date in the running month); add entries, confirm a week, CSV export.
+- **Absences:** month calendar for the whole team. Click a free working day to request leave from that day; approved leave is filled, requested leave outlined, each cell carries the kind's letter (half days marked).
+- **Leave requests:** board Requested / Approved / Rejected / Cancelled. Dragging a card decides the request; reopening a decided one is refused with the reason.
+- **Balances:** entitlement, adjustments, taken, pending and left per person.
+- **Capacity:** available hours per ISO week after holidays and approved leave; send to taskcraft.
+- **AZG checks:** findings with rule, severity and minutes; run a check, show cleared ones.
+- **Team:** employees (work fields only) and the KV minimum check with your own table.
+- **Settings:** database, demo data.
+
+Every change in the window goes through the same command path as CLI and MCP. Ctrl+K lists every tool with a generated form, and a test fails if a tool has no place in the window. High-contrast light and dark themes, Ctrl+mouse wheel zoom (Ctrl+0 resets), German and English, signals dock for the other craft apps.
+
+```powershell
+teamcraft-app --demo                 # on an empty database: load the demo first
+teamcraft-app --dark --lang en
+teamcraft-app --view 1 --select JM   # timesheet of one employee
+```
 
 ## Quick start
 
@@ -60,7 +88,8 @@ Needs `../craft-biz` checked out next to this repo.
 
 ## Not done (honest list)
 
-- No egui desktop app; no employee self-service UI.
+- No employee self-service login: the window is for the person who keeps the records. No menu bar yet (the suite menu bar standard is a later tier).
+- AZG finding details are English text from the engine, also in the German window.
 - Timesheet PDF not implemented (CSV only).
 - AZG: general rules only. No KV-specific extensions (e.g. 4-day week, Gleitzeit agreements, on-call), no night-work or Sunday-rest (ARG) checks, no youth employment rules (KJBG).
 - Leave entitlement: pro rata in the start year; the Urlaubsgesetz rule (accrual during the first 6 months) and the 30-days-after-25-years increase are not modelled. Part-time staff with fewer than 5 working days are approximated on a 5-day basis.

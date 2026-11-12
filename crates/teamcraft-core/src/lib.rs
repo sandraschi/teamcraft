@@ -775,20 +775,25 @@ pub fn timesheet(
             .iter()
             .find(|l| d >= l.from && d <= l.to)
             .map(|l| (l.kind, l.half_day));
-        if holidays::is_working_day(d).map_err(|x| x.to_string())? && d >= emp.start_date {
-            // Comp time draws on the overtime account, so the target stays.
-            target += match absence {
-                Some((LeaveKind::CompTime, _)) | None => daily_target,
-                Some((_, true)) => daily_target / 2,
-                Some(_) => 0,
+        let day_target =
+            if holidays::is_working_day(d).map_err(|x| x.to_string())? && d >= emp.start_date {
+                // Comp time draws on the overtime account, so the target stays.
+                match absence {
+                    Some((LeaveKind::CompTime, _)) | None => daily_target,
+                    Some((_, true)) => daily_target / 2,
+                    Some(_) => 0,
+                }
+            } else {
+                0
             };
-        }
+        target += day_target;
         total += day.work;
         rows.push(json!({
             "date": d, "weekday": azg::weekday_de(d),
             "start": day.first_start.map(|x| x.format("%H:%M").to_string()),
             "end": day.last_end.map(|x| x.format("%H:%M").to_string()),
             "break_minutes": day.breaks, "worked": fmt_hm(day.work), "minutes": day.work,
+            "target_minutes": day_target,
             "absence": absence.map(|(k, half)| if half { format!("{} (half)", k.as_str()) } else { k.as_str().to_string() }),
             "holiday": holiday, "azg": flagged.get(&d).cloned().unwrap_or_default(),
         }));

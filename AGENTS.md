@@ -9,7 +9,7 @@ Working time and leave for a small Austrian team (replaces Clockodo / Personio-l
 - `crates/teamcraft-store` (L1): employees, time entries, week locks, leave, adjustments, KV minimum table, AZG findings on SQLite WAL. All data invariants live here.
 - `crates/teamcraft-core` (L1): `Command` bus, `dispatch`, MCP catalog, `azg.rs` (pure AZG engine), timesheet, KV check, capacity (emits `capacity.changed` to taskcraft), demo seed.
 - `crates/teamcraft-mcp` (L2): `teamcraft` binary. CLI verbs map onto the same tool calls as MCP.
-- No L3 (egui) yet. Planned: clock panel, week view with AZG flags, leave calendar.
+- `crates/teamcraft-app` (L3): desktop window on `craft-biz-ui::app::Shell`. Views only change data through `Frame::run`/`form` (dispatch); reads use the store and the core's timesheet. `COVERAGE` maps every tool to its place; the test fails for a tool without one. Update README "Desktop window" and HELP "In the window" when a view changes.
 - Shared kernel: `../craft-biz` (holidays, money, bus, MCP loop, confinement).
 
 ## Invariants (never weaken)

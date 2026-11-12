@@ -4,6 +4,25 @@ Task-oriented guide. Every command also exists as an MCP tool ([docs/TOOLS.md](d
 
 teamcraft records working time and leave and checks the Arbeitszeitgesetz. It is **not payroll**.
 
+## In the window
+
+Everything below also works in `teamcraft-app`:
+
+| Task | Where |
+|---|---|
+| Clock someone in or out | Time clock: the person's card |
+| Decide leave | Time clock "Waiting for a decision", or Leave requests: drag the card onto Approved or Rejected |
+| Request leave | Absences: click a free working day of that person, or + Leave at the top |
+| Monthly record, add an entry, confirm a week, CSV | Timesheet: pick the employee and month |
+| Who is away when | Absences calendar (filled = approved, outline = requested, letter = kind, ½ = half day) |
+| Leave left this year, adjustments | Balances |
+| Hours available next week, send to taskcraft | Capacity |
+| AZG findings, run a check | AZG checks |
+| Employees, KV table and check | Team |
+| Anything else | Ctrl+K: every command with a form |
+
+In the running month the timesheet shows target and balance up to today; past months show the whole month. Keys: Ctrl+K commands, Ctrl+mouse wheel or Ctrl +/- zoom, Ctrl+0 reset zoom, F5 reload. Theme, language and zoom are remembered in `ui.json` next to the database.
+
 ## People
 
 ```powershell
