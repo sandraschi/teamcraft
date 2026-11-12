@@ -2852,7 +2852,7 @@ dependencies = [
 
 [[package]]
 name = "teamcraft-app"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "chrono",
  "craft-biz",
@@ -2866,7 +2866,7 @@ dependencies = [
 
 [[package]]
 name = "teamcraft-core"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "chrono",
  "craft-biz",
@@ -2877,7 +2877,7 @@ dependencies = [
 
 [[package]]
 name = "teamcraft-mcp"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "clap",
  "craft-biz",
@@ -2888,7 +2888,7 @@ dependencies = [
 
 [[package]]
 name = "teamcraft-store"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "chrono",
  "craft-biz",

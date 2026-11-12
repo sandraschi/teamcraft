@@ -3,7 +3,7 @@
 **Parent Standard:** [`RUST_ARTCRAFT_STANDARD.md`](../../mcp-central-docs/standards/RUST_ARTCRAFT_STANDARD.md)  
 **Menu Bar Standard:** [`CRAFT_MENU_BAR_STANDARD.md`](../../mcp-central-docs/standards/rust-artcraft/CRAFT_MENU_BAR_STANDARD.md)  
 **Architecture Model:** 4-Tier ArtCraft Incremental Delivery  
-**Status:** Active  
+**Status:** Tiers 1-3 done; Tier 4 done except packaging (v0.3.0)  
 
 ---
 
@@ -26,7 +26,7 @@ Tier 1: Core Engine ──> Tier 2: MCP / CLI ──> Tier 3: Desktop UI ──>
 - [x] Leave entitlement calculator against Austrian public holidays.
 - [x] KV minimum pay floor compliance checker.
 - [x] Cross-craft event emission (`capacity.changed` -> TaskCraft).
-- [x] `#![forbid(unsafe_code)]` and zero-panic clippy lints.
+- [x] `unsafe_code = "forbid"` (workspace lint since 0.3.0; claimed earlier, enforced now) and zero-panic clippy lints.
 
 ### Tier 2 - Headless Driver & FastMCP (`teamcraft-mcp`)
 - [x] Unified CLI `teamcraft-cli` with `--json` output.
@@ -41,9 +41,9 @@ Tier 1: Core Engine ──> Tier 2: MCP / CLI ──> Tier 3: Desktop UI ──>
 - [x] Team capacity planning cockpit.
 
 ### Tier 4 - Craft Menu Bar Standard, Help Suite & Hardened Verification
-- [ ] Universal 8-menu bar (`File`, `Edit`, `View`, `Insert`, `Modify`, `Commands`, `Window`, `Help`) with `switch_on_hover`.
-- [ ] Mandatory 5-dialog Help suite (`Command Palette...`, `Keyboard Shortcuts...`, `Project Files & Docs...`, `Licenses & Notices...`, `About TeamCraft`).
-- [ ] Fleet UI/UX Pattern 2 adherence: viewport-centric navigation, top button row mapped to View toggles, panel visibility managed via `View` / `Window`.
-- [ ] Tofu Guard verification (100% font glyph coverage, zero tofu placeholder boxes).
-- [ ] Headless `--smoke` parity validation.
+- [x] Universal 8-menu bar (`File`, `Edit`, `View`, `Insert`, `Modify`, `Commands`, `Window`, `Help`) with `switch_on_hover` (bookends from `craft-biz-ui`, middle menus in `TeamApp::menus`).
+- [x] Mandatory 5-dialog Help suite (`Command Palette...`, `Keyboard Shortcuts...`, `Project Files & Docs...`, `Licenses & Notices...`, `About TeamCraft`). Docs are compiled into the binary; the licenses list and commit/build date come from `build.rs`.
+- [x] Fleet UI/UX Pattern 2 adherence: quick view row mapped to View items, panel visibility managed via `View` / `Window`.
+- [x] Tofu Guard verification (every menu, shortcut and navigation label checked against the loaded fonts, DE and EN).
+- [x] Headless `--smoke` parity validation (menu items name real tools and arguments, no duplicate shortcuts).
 - [ ] Standalone release binary packaging and NSIS installer.

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 - 2026-11-12
+
+- Menu bar per the craft menu bar standard: shared File / Edit / View / Window / Help from `craft-biz-ui` (switch-on-hover, Help suite: palette, shortcuts F1, project docs, licenses, about), teamcraft's Insert, Modify and Commands, plus KV import and timesheet CSV export in File. Items act on the selected employee; 18 tool-backed items.
+- Help > Project Files & Docs shows README, HELP, PRD, plan, tools, changelog and AGENTS compiled into the binary; Licenses lists every registry crate in Cargo.lock with its declared license; About shows commit and build date (`build.rs`).
+- `--smoke` checks menu parity (real tools, real arguments, no duplicate shortcuts) and glyph coverage in DE and EN.
+- `unsafe_code = "forbid"` is now a workspace lint (the plan claimed it before; nothing enforced it).
+- Deviations from the PRD target, documented in docs/PRD.md: no "Edit Entry Notes" (entries are delete-and-add), no "New Timesheet Period" (nothing to create), undo not wired.
+
 ## 0.2.0 - 2026-11-12
 
 - Desktop window rebuilt on `craft_biz_ui::app::Shell` (the earlier window bypassed dispatch): time clock, timesheet, absence calendar, leave request board, balances, capacity, AZG checks, team and KV check, settings. All 25 tools reachable (coverage test); 6 window tests incl. a real board drag.

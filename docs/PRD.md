@@ -18,9 +18,10 @@ Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks,
 4. Make sure nobody is paid below the KV minimum.
 5. Feed real availability into project planning (taskcraft).
 
-## Today (v0.2.0)
+## Today (v0.3.0)
 
 - Desktop window `teamcraft-app` on the suite frame: time clock, monthly timesheet with AZG flags and balance to date, team absence calendar, leave request board (drag decides), balances, capacity, AZG findings, team with KV check. Every tool reachable (coverage test), high-contrast themes, Ctrl+wheel zoom, DE/EN.
+- Menu bar per the craft menu bar standard (v0.3.0): the shared bookends (File, Edit, View, Window, Help with the five-dialog Help suite) from `craft-biz-ui`, plus teamcraft's Insert, Modify and Commands and two File items; see the section at the end for the items as built. `--smoke` checks menu parity and glyph coverage.
 
 Core (since v0.1.0):
 
@@ -41,7 +42,10 @@ Core (since v0.1.0):
 ## Gaps (honest)
 
 - No employee self-service login; one window for the record keeper.
-- No menu bar yet (see the menu bar section below: a target, not implemented).
+- Menu items act on the selected employee; there is no multi-select.
+- Time entries cannot be edited in place (no tool for it): delete and add again. Hence no "Edit Entry Notes" menu item.
+- No "New Timesheet Period": the timesheet is computed per month, there is no period to create.
+- Undo/redo is not wired for teamcraft (the Edit menu shows it disabled); entries and leave decisions are records.
 - AZG finding details are English text from the engine.
 - AZG: no KV-specific extensions (Gleitzeit, 4-day week), no ARG Sunday/night rules, no KJBG.
 - Urlaubsgesetz accrual in the first 6 months and the 30-day entitlement after 25 years are not modelled; part-timers are approximated on a 5-day basis.
@@ -50,13 +54,25 @@ Core (since v0.1.0):
 
 ## Next
 
-1. Menu bar and help suite per the craft menu bar standard.
-2. Labour-law review; Gleitzeit as an opt-in profile.
-3. Timesheet PDF via pdfcraft.
+1. Labour-law review; Gleitzeit as an opt-in profile.
+2. Timesheet PDF via pdfcraft.
+3. Release packaging (exes, installer, mcpb) on the gaincraft model.
 
 ## UI/UX Architecture & Menu Bar Standard
 
-Status: target, not implemented in v0.2.0. The window today uses the suite frame (sidebar views, top actions, Ctrl+K command palette).
+Status: implemented in v0.3.0 (menus as built below; the original target list is kept underneath for reference).
+
+As built:
+- `File`: Import KV Data (`Ctrl+O`), Open Database (`Ctrl+Shift+O`), Open Recent, Save (`Ctrl+S`, folds the SQLite log; changes are saved when made), Export Timesheet CSV (`Ctrl+E`, selected employee and month), Close (`Ctrl+W`), Quit (`Ctrl+Q`).
+- `Edit`: Undo / Redo (disabled, see Gaps), Cut, Copy, Paste, Select All, Preferences (`Ctrl+,`).
+- `View`: every view of the navigation rail, zoom, theme, language, reload (`F5`).
+- `Insert`: Clock In / Clock Out (`Ctrl+Shift+C`, whichever applies), Add Manual Time Entry (`Ctrl+Shift+T`), Request Leave (`Ctrl+Shift+L`), Add Employee (`Ctrl+N`).
+- `Modify`: Edit Employee, Delete Time Entry, Approve Leave Request (oldest open request, the selected employee's first), Lock / Confirm Week, Adjust Balance.
+- `Commands`: Run AZG Violation Scan (`Ctrl+Shift+A`, this month to today), Check KV Minimum Pay Floors, Emit Capacity to TaskCraft (this week), Calculate Vacation Accruals, AZG Findings, Public Holidays, Status.
+- `Window`: Reset Layout, Navigation Rail, Quick View Row, Detail Panel, Signals Dock, Status Bar.
+- `Help`: Command Palette (`Ctrl+K`), Keyboard Shortcuts (`F1`), Project Files & Docs, Licenses & Notices, About TeamCraft.
+
+Original target:
 
 In accordance with [`CRAFT_MENU_BAR_STANDARD.md`](../../mcp-central-docs/standards/rust-artcraft/CRAFT_MENU_BAR_STANDARD.md):
 - **Pattern 2 (Viewport-Centric Craft Workstation):** Persistent timesheet week grid and team availability calendar with AZG compliance badges. Top quick button row acts as accelerators into the `View` menu. To add a new timesheet view or team schedule:

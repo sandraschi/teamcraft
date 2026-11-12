@@ -8,7 +8,7 @@
 
 Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks. One SQLite file, one binary that is both CLI and MCP server. Part of the back-office craft suite. **Not payroll**: no Lohnverrechnung, SV/LSt or ELDA.
 
-Status: **v0.2.0** (store + CLI + MCP + desktop window, tested). Synthetic demo data only; not checked by a labour lawyer or Steuerberater.
+Status: **v0.3.0** (store + CLI + MCP + desktop window with the craft menu bar and Help suite, tested). Synthetic demo data only; not checked by a labour lawyer or Steuerberater.
 
 - How to use it day to day: [HELP.md](HELP.md)
 - What it is for and where it stops: [docs/PRD.md](docs/PRD.md)
@@ -39,6 +39,8 @@ Status: **v0.2.0** (store + CLI + MCP + desktop window, tested). Synthetic demo 
 - **AZG checks:** findings with rule, severity and minutes; run a check, show cleared ones.
 - **Team:** employees (work fields only) and the KV minimum check with your own table.
 - **Settings:** database, demo data.
+
+Menu bar per the craft menu bar standard: File (KV import, timesheet CSV export, open database, recent), Edit, View, **Insert** (clock in/out, time entry, leave request, employee), **Modify** (employee, delete entry, decide leave, confirm week, adjust balance), **Commands** (AZG scan, KV check, capacity to taskcraft, vacation balances), Window (panel toggles), Help (command palette, shortcuts F1, project docs, licenses, about). Menu items act on the selected employee.
 
 Every change in the window goes through the same command path as CLI and MCP. Ctrl+K lists every tool with a generated form, and a test fails if a tool has no place in the window. High-contrast light and dark themes, Ctrl+mouse wheel zoom (Ctrl+0 resets), German and English, signals dock for the other craft apps.
 
@@ -88,7 +90,7 @@ Needs `../craft-biz` checked out next to this repo.
 
 ## Not done (honest list)
 
-- No employee self-service login: the window is for the person who keeps the records. No menu bar yet (the suite menu bar standard is a later tier).
+- No employee self-service login: the window is for the person who keeps the records. Time entries cannot be edited in place (delete and add again); undo is not wired for teamcraft.
 - AZG finding details are English text from the engine, also in the German window.
 - Timesheet PDF not implemented (CSV only).
 - AZG: general rules only. No KV-specific extensions (e.g. 4-day week, Gleitzeit agreements, on-call), no night-work or Sunday-rest (ARG) checks, no youth employment rules (KJBG).

@@ -11,13 +11,15 @@
 use chrono::{Datelike, Duration, Local, NaiveDate, Timelike};
 use craft_biz::bus::Bus;
 use craft_biz::holidays;
-use craft_biz_ui::app::{self, Frame, NavEntry, SuiteApp, Wiring};
+use craft_biz_ui::app::{self, AppMenus, Frame, NavEntry, SuiteApp, Wiring};
+use craft_biz_ui::help::{AppInfo, Doc};
 use craft_biz_ui::kanban::{self, Board, Card, Column};
+use craft_biz_ui::menu::{Item, Menu};
 use craft_biz_ui::table::{Cell, Col, Table, TableEvent};
 use craft_biz_ui::theme::{self, semibold};
 use craft_biz_ui::widgets::{self, Kpi};
 use craft_biz_ui::Tone;
-use egui::{Align2, FontId, RichText, Sense, Stroke, Ui, Vec2};
+use egui::{Align2, FontId, Key, Modifiers, RichText, Sense, Stroke, Ui, Vec2};
 use serde_json::{json, Value};
 use std::path::{Path, PathBuf};
 use teamcraft_core::{capacity, dispatch, kv_check, timesheet, tools, Command, Confinement, Ctx};
@@ -2008,6 +2010,234 @@ impl SuiteApp for TeamApp {
         "team_status"
     }
 
+    fn info(&self) -> AppInfo {
+        AppInfo {
+            name: "TeamCraft".into(),
+            version: teamcraft_core::VERSION.into(),
+            description: "Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks. Not payroll.".into(),
+            license: "MIT OR Apache-2.0".into(),
+            repository: "https://github.com/sandraschi/teamcraft".into(),
+            commit: env!("TEAM_COMMIT").into(),
+            built: env!("TEAM_BUILT").into(),
+            safety: "Every teamcraft and craft-biz crate is built with unsafe_code = forbid. Third-party crates (egui, wgpu, rusqlite with bundled SQLite) contain unsafe code of their own.".into(),
+            third_party: include_str!(concat!(env!("OUT_DIR"), "/third_party.tsv"))
+                .lines()
+                .filter_map(|l| {
+                    let mut it = l.split('\t');
+                    Some((
+                        it.next()?.to_string(),
+                        it.next()?.to_string(),
+                        it.next()?.to_string(),
+                    ))
+                })
+                .collect(),
+        }
+    }
+
+    fn docs(&self) -> Vec<Doc> {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("..").join("..");
+        vec![
+            Doc::embedded(
+                "README",
+                root.join("README.md"),
+                include_str!("../../../README.md"),
+            ),
+            Doc::embedded(
+                "HELP",
+                root.join("HELP.md"),
+                include_str!("../../../HELP.md"),
+            ),
+            Doc::embedded(
+                "PRD",
+                root.join("docs/PRD.md"),
+                include_str!("../../../docs/PRD.md"),
+            ),
+            Doc::embedded(
+                "Tiered plan",
+                root.join("docs/TIERED_PLAN.md"),
+                include_str!("../../../docs/TIERED_PLAN.md"),
+            ),
+            Doc::embedded(
+                "MCP tools",
+                root.join("docs/TOOLS.md"),
+                include_str!("../../../docs/TOOLS.md"),
+            ),
+            Doc::embedded(
+                "CHANGELOG",
+                root.join("CHANGELOG.md"),
+                include_str!("../../../CHANGELOG.md"),
+            ),
+            Doc::embedded(
+                "AGENTS",
+                root.join("AGENTS.md"),
+                include_str!("../../../AGENTS.md"),
+            ),
+        ]
+    }
+
+    /// PRD menus: Insert, Modify, Commands in the middle; KV import and
+    /// timesheet export in File. Items act on the selected employee.
+    fn menus(&self, f: &Frame) -> AppMenus {
+        let cmd = Modifiers::COMMAND;
+        let cmd_shift = Modifiers::COMMAND | Modifiers::SHIFT;
+        let emp = self.sel.as_str();
+        let has = !emp.is_empty();
+        let need = f.t("Zuerst eine Person wählen", "Select an employee first");
+        let today = self.today.to_string();
+        let month = self.month.format("%Y-%m").to_string();
+        let first = first_of(self.today).to_string();
+        let year = self.today.year().to_string();
+        let week = week_label(self.today);
+        let clocked_in = self.open.iter().any(|e| e.employee == emp);
+        let pending = self
+            .leaves
+            .iter()
+            .filter(|l| l.status == LeaveStatus::Requested)
+            .find(|l| l.employee == emp)
+            .or_else(|| {
+                self.leaves
+                    .iter()
+                    .find(|l| l.status == LeaveStatus::Requested)
+            })
+            .map(|l| l.id.to_string());
+        let clock = if clocked_in {
+            Item::run(
+                f.t("Ausstempeln", "Clock Out"),
+                "team_clock_out",
+                json!({ "employee": emp }),
+            )
+        } else {
+            Item::run(
+                f.t("Einstempeln", "Clock In"),
+                "team_clock_in",
+                json!({ "employee": emp }),
+            )
+        };
+        AppMenus {
+            file_new: vec![Item::form(
+                f.t("KV-Tabelle importieren...", "Import KV Data..."),
+                "team_kv_import",
+                &[],
+            )
+            .key(cmd, Key::O)],
+            export: vec![Item::form(
+                f.t("Arbeitszeitaufzeichnung exportieren (CSV)...", "Export Timesheet CSV..."),
+                "team_timesheet",
+                &[("employee", emp), ("month", &month)],
+            )
+            .key(cmd, Key::E)
+            .enabled(has)
+            .hint(need)],
+            middle: vec![
+                Menu::new(
+                    f.t("Einfügen", "Insert"),
+                    vec![
+                        clock.key(cmd_shift, Key::C).enabled(has).hint(need),
+                        Item::form(
+                            f.t("Zeit nachtragen...", "Add Manual Time Entry..."),
+                            "team_time_add",
+                            &[("employee", emp), ("date", &today)],
+                        )
+                        .key(cmd_shift, Key::T),
+                        Item::form(
+                            f.t("Abwesenheit beantragen...", "Request Leave..."),
+                            "team_leave_request",
+                            &[("employee", emp), ("kind", "vacation")],
+                        )
+                        .key(cmd_shift, Key::L),
+                        Item::form(
+                            f.t("Person anlegen...", "Add Employee..."),
+                            "team_employee_add",
+                            &[],
+                        )
+                        .key(cmd, Key::N),
+                    ],
+                ),
+                Menu::new(
+                    f.t("Ändern", "Modify"),
+                    vec![
+                        Item::form(
+                            f.t("Person bearbeiten...", "Edit Employee..."),
+                            "team_employee_update",
+                            &[("code", emp)],
+                        )
+                        .enabled(has)
+                        .hint(need),
+                        Item::form(
+                            f.t("Zeiteintrag löschen...", "Delete Time Entry..."),
+                            "team_time_delete",
+                            &[],
+                        )
+                        .hint(f.t(
+                            "Einträge sind nicht bearbeitbar: löschen und neu erfassen (nicht in bestätigten Wochen)",
+                            "Entries are not edited in place: delete and add again (not in confirmed weeks)",
+                        )),
+                        Item::sep(),
+                        Item::form(
+                            f.t("Antrag entscheiden...", "Approve Leave Request..."),
+                            "team_leave_decide",
+                            &[("id", pending.as_deref().unwrap_or("")), ("approve", "true")],
+                        )
+                        .enabled(pending.is_some())
+                        .hint(f.t("Kein offener Antrag", "No open leave request")),
+                        Item::form(
+                            f.t("Woche bestätigen...", "Lock / Confirm Week..."),
+                            "team_week_confirm",
+                            &[("employee", emp), ("week", &week)],
+                        )
+                        .enabled(has)
+                        .hint(need),
+                        Item::form(
+                            f.t("Urlaubskonto anpassen...", "Adjust Balance..."),
+                            "team_leave_adjust",
+                            &[("employee", emp), ("year", &year)],
+                        )
+                        .enabled(has)
+                        .hint(need),
+                    ],
+                ),
+                Menu::new(
+                    f.t("Befehle", "Commands"),
+                    vec![
+                        Item::run(
+                            f.t("AZG-Prüfung (Monat bis heute)", "Run AZG Violation Scan"),
+                            "team_azg_check",
+                            json!({ "from": first, "to": today }),
+                        )
+                        .key(cmd_shift, Key::A),
+                        Item::run(
+                            f.t("KV-Mindestlöhne prüfen", "Check KV Minimum Pay Floors"),
+                            "team_kv_check",
+                            json!({}),
+                        ),
+                        Item::run(
+                            f.t("Kapazität an TaskCraft senden", "Emit Capacity to TaskCraft"),
+                            "team_capacity",
+                            json!({ "week": week, "emit": true }),
+                        ),
+                        Item::run(
+                            f.t("Urlaubsansprüche berechnen", "Calculate Vacation Accruals"),
+                            "team_leave_balance",
+                            json!({ "year": self.today.year() }),
+                        ),
+                        Item::sep(),
+                        Item::run(
+                            f.t("AZG-Befunde", "AZG Findings"),
+                            "team_violations",
+                            json!({}),
+                        ),
+                        Item::run(
+                            f.t("Feiertage", "Public Holidays"),
+                            "team_holidays",
+                            json!({ "year": self.today.year() }),
+                        ),
+                        Item::run(f.t("Status", "Status"), "team_status", json!({})),
+                    ],
+                ),
+            ],
+            ..AppMenus::default()
+        }
+    }
 }
 
 fn default_db() -> PathBuf {
@@ -2046,6 +2276,48 @@ mod tests {
     use super::*;
     use craft_biz_ui::app::Shell;
     use egui_kittest::Harness;
+
+    #[test]
+    fn menu_bar_has_the_prd_middle_menus_and_passes_parity() {
+        let (sh, dir) = shell("menus");
+        let mut sh = sh.with_args(&craft_biz_ui::app::Args {
+            lang: Some("en".into()),
+            ..Default::default()
+        });
+        let titles: Vec<String> = sh.menus().iter().map(|m| m.title.clone()).collect();
+        assert_eq!(
+            titles,
+            ["File", "Edit", "View", "Insert", "Modify", "Commands", "Window", "Help"]
+        );
+        for path in [
+            ["Insert", "Request Leave..."],
+            ["Modify", "Lock / Confirm Week..."],
+            ["Commands", "Run AZG Violation Scan"],
+            ["File", "Import KV Data..."],
+        ] {
+            assert!(sh.menu_item(&path).is_some(), "missing {path:?}");
+        }
+        let check = sh.menu_check().unwrap();
+        assert!(check["en"]["tool_items"].as_i64().unwrap() >= 18, "{check}");
+        let info = sh.app.info();
+        assert!(info.third_party.iter().any(|(n, _, _)| n == "egui"));
+        assert!(sh
+            .app
+            .docs()
+            .iter()
+            .all(|d| d.text.is_some_and(|t| !t.is_empty())));
+        // Menu commands go through dispatch like everything else.
+        sh.trigger(craft_biz_ui::menu::Picked::Run(
+            "team_azg_check".into(),
+            json!({ "from": "2026-11-01", "to": "2026-11-12" }),
+        ));
+        let mut h = Harness::builder()
+            .with_size([1440.0, 900.0])
+            .build_ui_state(|ui, sh: &mut Shell<TeamApp>| sh.show(ui), sh);
+        h.run_steps(3);
+        assert!(h.state().last_error.is_none(), "{:?}", h.state().last_error);
+        let _ = std::fs::remove_dir_all(dir);
+    }
 
     fn shell(tag: &str) -> (Shell<TeamApp>, PathBuf) {
         let dir = std::env::temp_dir().join(format!("teamcraft-app-{tag}-{}", std::process::id()));

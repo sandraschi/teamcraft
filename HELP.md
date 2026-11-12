@@ -21,7 +21,11 @@ Everything below also works in `teamcraft-app`:
 | Employees, KV table and check | Team |
 | Anything else | Ctrl+K: every command with a form |
 
-In the running month the timesheet shows target and balance up to today; past months show the whole month. Keys: Ctrl+K commands, Ctrl+mouse wheel or Ctrl +/- zoom, Ctrl+0 reset zoom, F5 reload. Theme, language and zoom are remembered in `ui.json` next to the database.
+In the running month the timesheet shows target and balance up to today; past months show the whole month.
+
+The menu bar has the same actions, for the selected employee: **Insert** (clock in or out Ctrl+Shift+C, add a time entry Ctrl+Shift+T, request leave Ctrl+Shift+L, add an employee Ctrl+N), **Modify** (edit employee, delete a time entry, decide a leave request, confirm a week, adjust a balance), **Commands** (AZG scan for this month Ctrl+Shift+A, KV check, send capacity to taskcraft, vacation balances, findings, holidays, status), and in **File** KV import (Ctrl+O) and timesheet CSV export (Ctrl+E). Time entries are not edited in place: delete and add again (not possible in a confirmed week).
+
+Keys: F1 lists every shortcut (Help > Keyboard Shortcuts). Ctrl+K commands, Ctrl+mouse wheel or Ctrl +/- zoom, Ctrl+0 reset zoom, F5 reload, Esc closes a dialog. Theme, language, zoom, panel layout and recent databases are remembered in `ui.json` next to the database.
 
 ## People
 
