@@ -12,7 +12,7 @@
     CliBin      = 'teamcraft'
     CliSmoke    = @('--db', '{db}', 'status')
     McpArgs     = @('mcp')
-    McpSmoke    = @('--db', '{db}', 'mcp')
+    McpSmoke    = @('mcp')
     Installer   = $true
     Mcpb        = $true
 }
