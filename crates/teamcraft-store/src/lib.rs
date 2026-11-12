@@ -868,6 +868,16 @@ impl Team {
         Ok(rows)
     }
 
+    /// Every open entry (clocked in, not out), however old.
+    pub fn open_entries(&self) -> Result<Vec<TimeEntry>> {
+        let sql = format!("{TIME_SELECT} WHERE t.end_at IS NULL ORDER BY e.code");
+        let mut st = self.conn.prepare(&sql)?;
+        let rows = st
+            .query_map([], time_row)?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        Ok(rows)
+    }
+
     /// Employee confirms a week; afterwards its entries are read-only.
     pub fn confirm_week(
         &self,
