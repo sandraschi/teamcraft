@@ -3,7 +3,7 @@
 **Parent Standard:** [`RUST_ARTCRAFT_STANDARD.md`](../../mcp-central-docs/standards/RUST_ARTCRAFT_STANDARD.md)  
 **Menu Bar Standard:** [`CRAFT_MENU_BAR_STANDARD.md`](../../mcp-central-docs/standards/rust-artcraft/CRAFT_MENU_BAR_STANDARD.md)  
 **Architecture Model:** 4-Tier ArtCraft Incremental Delivery  
-**Status:** Tiers 1-3 done; Tier 4 done except packaging (v0.3.0)  
+**Status:** Tiers 1-4 done (v0.3.0)  
 
 ---
 
@@ -46,4 +46,4 @@ Tier 1: Core Engine ──> Tier 2: MCP / CLI ──> Tier 3: Desktop UI ──>
 - [x] Fleet UI/UX Pattern 2 adherence: quick view row mapped to View items, panel visibility managed via `View` / `Window`.
 - [x] Tofu Guard verification (every menu, shortcut and navigation label checked against the loaded fonts, DE and EN).
 - [x] Headless `--smoke` parity validation (menu items name real tools and arguments, no duplicate shortcuts).
-- [ ] Standalone release binary packaging and NSIS installer.
+- [x] Standalone release binaries, per-user NSIS installer, mcpb bundle (`scripts/release.ps1`, `just release-dry` / `just release`).

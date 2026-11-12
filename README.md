@@ -83,10 +83,13 @@ Database: `--db PATH`, else `$TEAMCRAFT_DB`, else `%LOCALAPPDATA%\teamcraft\team
 
 ```powershell
 just ci
+just smoke         # headless: status, menu parity, glyph check
 just build-release
+just release-dry   # dist/: teamcraft-app.exe, teamcraft.exe, per-user setup.exe, .mcpb, SHA256SUMS
+just release       # the same, then tag + GitHub release (clean, pushed main)
 ```
 
-Needs `../craft-biz` checked out next to this repo.
+Needs `../craft-biz` checked out next to this repo. The installer (NSIS, no admin rights) puts the programs in `%LOCALAPPDATA%\Programs\TeamCraft`; the database stays in `%LOCALAPPDATA%\teamcraft`, so uninstalling never deletes the records.
 
 ## Not done (honest list)
 

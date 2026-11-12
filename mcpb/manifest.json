@@ -1,0 +1,43 @@
+{
+  "manifest_version": "0.2",
+  "name": "teamcraft",
+  "display_name": "teamcraft",
+  "version": "__VERSION__",
+  "description": "Working time and leave for a small Austrian team: time clock, AZG section 26 timesheets, Arbeitszeitgesetz checks, leave and balances, KV pay floor check, capacity for taskcraft. Not payroll.",
+  "author": { "name": "Sandra Schipal", "url": "https://github.com/sandraschi" },
+  "repository": { "type": "git", "url": "https://github.com/sandraschi/teamcraft" },
+  "license": "MIT OR Apache-2.0",
+  "server": {
+    "type": "binary",
+    "entry_point": "teamcraft.exe",
+    "mcp_config": { "command": "${__dirname}/teamcraft.exe", "args": ["mcp"] }
+  },
+  "compatibility": { "platforms": ["win32"] },
+  "tools": [
+    { "name": "team_status", "description": "Counts (active employees, clocked in, open leave requests, active AZG findings) and who is clocked in now." },
+    { "name": "team_employee_add", "description": "Add an employee." },
+    { "name": "team_employee_list", "description": "List employees." },
+    { "name": "team_employee_update", "description": "Change employee fields; null clears kv_name/kv_group/monthly_gross." },
+    { "name": "team_clock_in", "description": "Start a time entry (one open entry per employee)." },
+    { "name": "team_clock_out", "description": "Close the open entry with break minutes." },
+    { "name": "team_time_add", "description": "Record a past entry." },
+    { "name": "team_time_list", "description": "Entries and daily totals in a date range." },
+    { "name": "team_time_delete", "description": "Delete an entry (refused in confirmed weeks)." },
+    { "name": "team_week_confirm", "description": "Employee confirms an ISO week (2026-W45)." },
+    { "name": "team_azg_check", "description": "Check working-time law (10h/12h daily, 60h weekly, 48h 17-week average, 30 min break above 6h, 11h rest)." },
+    { "name": "team_violations", "description": "Recorded AZG findings; cleared ones only with include_cleared." },
+    { "name": "team_leave_request", "description": "Request leave." },
+    { "name": "team_leave_decide", "description": "Approve or reject a request." },
+    { "name": "team_leave_cancel", "description": "Cancel a requested or approved leave." },
+    { "name": "team_leave_list", "description": "Leaves, optionally by employee, year and status." },
+    { "name": "team_leave_balance", "description": "Vacation entitlement (pro rata in the start year), taken, pending, remaining; sick/comp/unpaid day counts." },
+    { "name": "team_leave_adjust", "description": "Add or subtract vacation days for a year (carry-over etc.), with a reason." },
+    { "name": "team_holidays", "description": "Austrian national public holidays of a year." },
+    { "name": "team_kv_import", "description": "Import KV minimum wages from CSV kv;group;valid_from;monthly_min;weekly_hours." },
+    { "name": "team_kv_list", "description": "KV minimum table." },
+    { "name": "team_kv_check", "description": "Compare each employee\u0027s gross with the KV minimum valid on a date, pro rata to weekly hours." },
+    { "name": "team_timesheet", "description": "Monthly working-time record (AZG section 26): per day start/end/break/worked/absence/holiday/AZG flags, worked vs target." },
+    { "name": "team_capacity", "description": "Available hours per employee for an ISO week after holidays and approved leave." },
+    { "name": "team_demo_seed", "description": "Fill an EMPTY database with a labelled demo team, fictional KV table and deliberate AZG findings." }
+  ]
+}

@@ -6,6 +6,7 @@
 - Help > Project Files & Docs shows README, HELP, PRD, plan, tools, changelog and AGENTS compiled into the binary; Licenses lists every registry crate in Cargo.lock with its declared license; About shows commit and build date (`build.rs`).
 - `--smoke` checks menu parity (real tools, real arguments, no duplicate shortcuts) and glyph coverage in DE and EN.
 - `unsafe_code = "forbid"` is now a workspace lint (the plan claimed it before; nothing enforced it).
+- Packaging: `scripts/release.ps1` (gates, release build, smoke on a throwaway database, plain exe assets, per-user NSIS installer, mcpb bundle, launcher zip as an extra only, SHA256SUMS, publish opt-in), `installer/installer.nsi`, `mcpb/manifest.json` (kept in sync with the catalog by a test), `just smoke` / `release-dry` / `release`.
 - Deviations from the PRD target, documented in docs/PRD.md: no "Edit Entry Notes" (entries are delete-and-add), no "New Timesheet Period" (nothing to create), undo not wired.
 
 ## 0.2.0 - 2026-11-12

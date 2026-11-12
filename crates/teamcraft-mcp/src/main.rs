@@ -802,6 +802,25 @@ mod tests {
     use craft_biz::mcp::handle_line;
 
     #[test]
+    fn mcpb_manifest_lists_exactly_the_catalog() {
+        let m: Value = serde_json::from_str(include_str!("../../../mcpb/manifest.json")).unwrap();
+        let mut listed: Vec<String> = m["tools"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|t| t["name"].as_str().unwrap().to_string())
+            .collect();
+        let mut catalog: Vec<String> = tools()
+            .iter()
+            .map(|t| t["name"].as_str().unwrap().to_string())
+            .collect();
+        listed.sort();
+        catalog.sort();
+        assert_eq!(listed, catalog, "update mcpb/manifest.json");
+        assert_eq!(m["server"]["entry_point"], "teamcraft.exe");
+    }
+
+    #[test]
     fn tools_doc_is_current() {
         let committed = include_str!("../../../docs/TOOLS.md");
         assert!(

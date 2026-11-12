@@ -22,6 +22,7 @@ Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks,
 
 - Desktop window `teamcraft-app` on the suite frame: time clock, monthly timesheet with AZG flags and balance to date, team absence calendar, leave request board (drag decides), balances, capacity, AZG findings, team with KV check. Every tool reachable (coverage test), high-contrast themes, Ctrl+wheel zoom, DE/EN.
 - Menu bar per the craft menu bar standard (v0.3.0): the shared bookends (File, Edit, View, Window, Help with the five-dialog Help suite) from `craft-biz-ui`, plus teamcraft's Insert, Modify and Commands and two File items; see the section at the end for the items as built. `--smoke` checks menu parity and glyph coverage.
+- Release pipeline (v0.3.0): plain exes, per-user NSIS installer, mcpb bundle, checksums (`scripts/release.ps1`, `just release`).
 
 Core (since v0.1.0):
 
@@ -56,7 +57,7 @@ Core (since v0.1.0):
 
 1. Labour-law review; Gleitzeit as an opt-in profile.
 2. Timesheet PDF via pdfcraft.
-3. Release packaging (exes, installer, mcpb) on the gaincraft model.
+3. contractcraft / payroll-office export once the AZG rules are reviewed.
 
 ## UI/UX Architecture & Menu Bar Standard
 
