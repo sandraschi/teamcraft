@@ -865,7 +865,7 @@ mod tests {
         assert_eq!(init["result"]["serverInfo"]["name"], "teamcraft");
         let list =
             handle_line(&mut h, r#"{"jsonrpc":"2.0","id":2,"method":"tools/list"}"#).unwrap();
-        assert_eq!(list["result"]["tools"].as_array().map(Vec::len), Some(25));
+        assert_eq!(list["result"]["tools"].as_array().map(Vec::len), Some(26));
         let seed = handle_line(&mut h, r#"{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"team_demo_seed","arguments":{}}}"#).unwrap();
         assert_eq!(seed["result"]["isError"], false, "{seed}");
         let hol = handle_line(&mut h, r#"{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"team.holidays","arguments":{"year":2026}}}"#).unwrap();

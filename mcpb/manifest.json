@@ -38,6 +38,7 @@
     { "name": "team_kv_check", "description": "Compare each employee\u0027s gross with the KV minimum valid on a date, pro rata to weekly hours." },
     { "name": "team_timesheet", "description": "Monthly working-time record (AZG section 26): per day start/end/break/worked/absence/holiday/AZG flags, worked vs target." },
     { "name": "team_capacity", "description": "Available hours per employee for an ISO week after holidays and approved leave." },
+    { "name": "team_drain_inbox", "description": "Open one employee per hirecraft candidate.hired event. Salary is not copied." },
     { "name": "team_demo_seed", "description": "Fill an EMPTY database with a labelled demo team, fictional KV table and deliberate AZG findings." }
   ]
 }
