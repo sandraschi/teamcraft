@@ -18,7 +18,7 @@ fn call(c: &mut Ctx, name: &str, a: Value) -> Result<Value, String> {
 
 #[test]
 fn catalog_tools_are_routable() {
-    assert_eq!(tools().len(), 25);
+    assert_eq!(tools().len(), 26);
     for t in tools() {
         let name = t["name"].as_str().unwrap();
         if let Err(err) = Command::from_tool(name, &json!({})) {
@@ -249,5 +249,48 @@ fn capacity_and_event_to_taskcraft() {
     assert_eq!(pending.len(), 1);
     assert_eq!(pending[0].kind, "capacity.changed");
     assert_eq!(pending[0].payload["week"], "2026-W44");
+    let _ = std::fs::remove_dir_all(c.bus.root());
+}
+
+#[test]
+fn hired_event_opens_one_employee_without_a_wage() {
+    let mut c = ctx("hired");
+    let hired = json!({
+        "candidate_id": "C-1",
+        "name": "Ada",
+        "email": "ada@example.at",
+        "salary_eur": 70000,
+        "azg_weekly_cap": 38.5,
+        "annual_leave_days": 25
+    });
+    c.bus
+        .emit("hirecraft", "teamcraft", "candidate.hired", hired.clone())
+        .unwrap();
+    c.bus
+        .emit("hirecraft", "teamcraft", "candidate.hired", hired)
+        .unwrap();
+    c.bus
+        .emit(
+            "hirecraft",
+            "teamcraft",
+            "candidate.hired",
+            json!({ "candidate_id": "C-2" }),
+        )
+        .unwrap();
+    let result = call(&mut c, "team_drain_inbox", json!({})).unwrap();
+    assert_eq!(result["processed"], 3);
+    assert_eq!(result["rejected"], 1);
+    assert_eq!(result["created"].as_array().unwrap().len(), 1);
+    let ada = c.team.employee("C1").unwrap();
+    assert_eq!(ada.name, "Ada");
+    assert_eq!(ada.weekly_minutes, 2310);
+    assert_eq!(ada.leave_days_per_year, 25);
+    assert_eq!(ada.monthly_gross_cents, None);
+    assert!(c.bus.pending("teamcraft").unwrap().is_empty());
+    let failed = c
+        .bus
+        .history("teamcraft", craft_biz::bus::EventState::Failed, 10)
+        .unwrap();
+    assert_eq!(failed.len(), 1);
     let _ = std::fs::remove_dir_all(c.bus.root());
 }

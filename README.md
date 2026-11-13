@@ -77,7 +77,7 @@ Database: `--db PATH`, else `$TEAMCRAFT_DB`, else `%LOCALAPPDATA%\teamcraft\team
 { "mcpServers": { "teamcraft": { "command": "D:/Dev/cargo-target/release/teamcraft.exe", "args": ["mcp", "--allow-path", "D:/Dev/teamcraft-files"] } } }
 ```
 
-25 tools, all `team_*`; see [docs/TOOLS.md](docs/TOOLS.md). Agent decisions (e.g. leave approval) are recorded with actor `agent`.
+26 tools, all `team_*`; see [docs/TOOLS.md](docs/TOOLS.md). Agent decisions (e.g. leave approval) are recorded with actor `agent`.
 
 ## Build
 

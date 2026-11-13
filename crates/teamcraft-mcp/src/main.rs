@@ -120,6 +120,8 @@ enum Cmd {
         #[arg(long)]
         emit: bool,
     },
+    /// Open an employee record from each hirecraft candidate.hired event.
+    DrainInbox,
     /// Fill an empty database with the labelled demo team.
     DemoSeed,
     /// Print the MCP tool catalog (JSON, or markdown for docs/TOOLS.md).
@@ -516,6 +518,7 @@ fn to_tool(cmd: Cmd) -> Result<(&'static str, Value), String> {
             "team_capacity",
             obj(vec![("week", os(week)), ("emit", Some(json!(emit)))]),
         ),
+        Cmd::DrainInbox => ("team_drain_inbox", json!({})),
         Cmd::DemoSeed => ("team_demo_seed", json!({})),
         Cmd::Tools { .. } | Cmd::Mcp => return Err("not a tool verb".into()),
     })
@@ -911,6 +914,7 @@ mod tests {
                 week: None,
                 emit: false,
             },
+            Cmd::DrainInbox,
             Cmd::DemoSeed,
         ];
         let names: Vec<String> = tools()

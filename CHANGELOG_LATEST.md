@@ -1,4 +1,4 @@
-# teamcraft v0.3.0
+# teamcraft v0.3.1
 
 Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks. Not payroll. Local, one SQLite file. Windows x64.
 
@@ -6,8 +6,12 @@ Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks.
 
 - `teamcraft-app.exe`: the desktop window.
 - `teamcraft.exe`: CLI and MCP server (`teamcraft mcp --allow-path <dir>`).
-- `teamcraft-0.3.0-setup.exe`: per-user installer for both (no admin rights). Your records stay in `%LOCALAPPDATA%\teamcraft`.
-- `teamcraft-v0.3.0.mcpb`: MCP bundle.
+- `teamcraft-0.3.1-setup.exe`: per-user installer for both (no admin rights). Your records stay in `%LOCALAPPDATA%\teamcraft`.
+- `teamcraft-v0.3.1.mcpb`: MCP bundle.
+
+## What is new since 0.3.0
+
+- A `candidate.hired` event from hirecraft opens one employee and does not copy a wage.
 
 ## What is new since 0.1.1
 

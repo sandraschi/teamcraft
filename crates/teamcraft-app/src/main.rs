@@ -70,6 +70,7 @@ pub const COVERAGE: &[(&str, &str)] = &[
     ("team_kv_check", "Team > KV check (table and report)"),
     ("team_timesheet", "Timesheet > Export CSV"),
     ("team_capacity", "Capacity > Send to taskcraft"),
+    ("team_drain_inbox", "Settings > Take new hires"),
     ("team_demo_seed", "Empty state; Settings > Demo data"),
 ];
 
@@ -1838,6 +1839,16 @@ impl TeamApp {
             ui.horizontal(|ui| {
                 if ui.button("Status").clicked() {
                     f.run_show("team_status", json!({}));
+                }
+                if ui
+                    .button(f.t("Neueinstellungen übernehmen", "Take new hires"))
+                    .clicked()
+                {
+                    f.run(
+                        f.t("Neueinstellungen", "New hires"),
+                        "team_drain_inbox",
+                        json!({}),
+                    );
                 }
                 if ui.button(f.t("Feiertage", "Public holidays")).clicked() {
                     f.run_show("team_holidays", json!({ "year": self.today.year() }));

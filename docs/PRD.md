@@ -31,7 +31,7 @@ Core (since v0.1.0):
 - AZG engine: 10 h warning, 12 h, 60 h/week, 48 h average over 17 weeks, 30 min break above 6 h, 11 h rest; findings recorded, cleared but kept.
 - Leave in half-days against Austrian public holidays, pro rata entitlement, adjustments, approval gate, sick leave without reason.
 - KV import and pro rata check; monthly timesheet CSV with target and balance; weekly capacity sent to taskcraft (verified end to end).
-- 25 MCP tools ([TOOLS.md](TOOLS.md), generated and test-checked).
+- 26 MCP tools ([TOOLS.md](TOOLS.md), generated and test-checked). `team_drain_inbox` opens one employee from a hire. It does not copy a salary.
 
 ## Boundaries
 

@@ -128,6 +128,7 @@ pub enum Command {
         week: String,
         emit: bool,
     },
+    DrainInbox,
     DemoSeed,
 }
 
@@ -393,6 +394,7 @@ impl Command {
                 week: opt_s(a, "week").unwrap_or_else(|| week_label(today())),
                 emit: flag(a, "emit"),
             },
+            "team_drain_inbox" => Command::DrainInbox,
             "team_demo_seed" => Command::DemoSeed,
             other => return Err(format!("unknown tool {other}")),
         })
@@ -556,6 +558,7 @@ pub fn dispatch(ctx: &mut Ctx, cmd: Command) -> Result<Value, String> {
             path,
         } => timesheet(ctx, &employee, &month, path.as_deref()),
         Command::Capacity { week, emit } => capacity(ctx, &week, emit),
+        Command::DrainInbox => drain_inbox(ctx),
         Command::DemoSeed => demo_seed(&ctx.team),
     }
 }
@@ -1033,6 +1036,125 @@ pub fn demo_seed(t: &Team) -> Result<Value, String> {
     )
 }
 
+/// Opens one employee from each `candidate.hired` event.
+///
+/// The employee code is the candidate id reduced to at most eight letters or
+/// digits. Salary is not copied: this is not payroll. A second event for the
+/// same code is acknowledged and does not add another person.
+pub fn drain_inbox(ctx: &mut Ctx) -> Result<Value, String> {
+    let events = ctx.bus.pending(APP).map_err(|err| err.to_string())?;
+    let processed = events.len();
+    let mut created = Vec::new();
+    let mut rejected = 0usize;
+    for ev in events {
+        let outcome = if ev.kind == "candidate.hired" {
+            apply_hired(ctx, &ev.payload)
+        } else {
+            Ok(None)
+        };
+        match outcome {
+            Ok(Some(code)) => {
+                created.push(code);
+                ctx.bus.ack(APP, &ev.id).map_err(|err| err.to_string())?;
+            }
+            Ok(None) => ctx.bus.ack(APP, &ev.id).map_err(|err| err.to_string())?,
+            Err(err) => {
+                rejected += 1;
+                ctx.bus
+                    .reject(APP, &ev.id, &err)
+                    .map_err(|bus_err| bus_err.to_string())?;
+            }
+        }
+    }
+    Ok(json!({
+        "processed": processed,
+        "created": created,
+        "rejected": rejected,
+    }))
+}
+
+fn apply_hired(ctx: &mut Ctx, payload: &Value) -> Result<Option<String>, String> {
+    let candidate_id = required_text(payload, "candidate_id")?;
+    let name = required_text(payload, "name")?;
+    let code = employee_code(candidate_id)?;
+    match ctx.team.employee(&code) {
+        Ok(_) => return Ok(None),
+        Err(TeamError::NotFound(_)) => {}
+        Err(err) => return Err(e(err)),
+    }
+    let weekly_minutes = weekly_minutes_from_cap(payload)?;
+    let leave_days_per_year = leave_days_from_payload(payload)?;
+    let employee = ctx
+        .team
+        .add_employee(&NewEmployee {
+            code: code.clone(),
+            name: name.to_string(),
+            weekly_minutes,
+            leave_days_per_year,
+            start_date: Some(today()),
+            kv_name: None,
+            kv_group: None,
+            monthly_gross_cents: None,
+        })
+        .map_err(e)?;
+    Ok(Some(employee.code))
+}
+
+fn employee_code(candidate_id: &str) -> Result<String, String> {
+    let code: String = candidate_id
+        .chars()
+        .filter(|ch| ch.is_ascii_alphanumeric())
+        .collect();
+    let code = code.to_ascii_uppercase();
+    if !(1..=8).contains(&code.len()) {
+        return Err(
+            "candidate_id must leave 1-8 letters or digits after other characters are removed"
+                .into(),
+        );
+    }
+    Ok(code)
+}
+
+fn weekly_minutes_from_cap(payload: &Value) -> Result<Option<i64>, String> {
+    match payload.get("azg_weekly_cap") {
+        None | Some(Value::Null) => Ok(None),
+        Some(value) => {
+            let hours = value
+                .as_f64()
+                .ok_or_else(|| "azg_weekly_cap must be a number of hours".to_string())?;
+            let minutes = (hours * 60.0).round();
+            if !minutes.is_finite() || !(1.0..=3600.0).contains(&minutes) {
+                return Err("weekly cap must be above 0 and at most 60 hours".into());
+            }
+            Ok(Some(minutes as i64))
+        }
+    }
+}
+
+fn leave_days_from_payload(payload: &Value) -> Result<Option<i64>, String> {
+    match payload.get("annual_leave_days") {
+        None | Some(Value::Null) => Ok(None),
+        Some(value) => {
+            let days = value
+                .as_i64()
+                .ok_or_else(|| "annual_leave_days must be a whole number".to_string())?;
+            if !(0..=60).contains(&days) {
+                return Err("annual leave must be 0-60 days".into());
+            }
+            Ok(Some(days))
+        }
+    }
+}
+
+fn required_text<'a>(payload: &'a Value, key: &str) -> Result<&'a str, String> {
+    payload
+        .get(key)
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .ok_or_else(|| format!("{key} is required"))
+}
+
 /// MCP tool catalog.
 pub fn tools() -> Vec<Value> {
     let emp = json!({ "type": "string", "description": "Employee code, e.g. JM" });
@@ -1070,6 +1192,7 @@ pub fn tools() -> Vec<Value> {
         tool("team_kv_check", "Compare each employee's gross with the KV minimum valid on a date, pro rata to weekly hours.", json!({ "date": date }), &[]),
         tool("team_timesheet", "Monthly working-time record (AZG section 26): per day start/end/break/worked/absence/holiday/AZG flags, worked vs target. path writes a semicolon CSV.", json!({ "employee": emp, "month": {"type":"string","description":"YYYY-MM"}, "path": {"type":"string"} }), &["employee", "month"]),
         tool("team_capacity", "Available hours per employee for an ISO week after holidays and approved leave. emit=true sends capacity.changed to taskcraft.", json!({ "week": {"type":"string"}, "emit": {"type":"boolean"} }), &[]),
+        tool("team_drain_inbox", "Open one employee per hirecraft candidate.hired event. The code is the candidate id reduced to 1-8 letters or digits. Salary is not copied. A repeated candidate is skipped. A payload without candidate_id or name is rejected.", json!({}), &[]),
         tool("team_demo_seed", "Fill an EMPTY database with a labelled demo team, fictional KV table and deliberate AZG findings.", json!({}), &[]),
     ]
 }

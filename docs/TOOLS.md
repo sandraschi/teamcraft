@@ -29,4 +29,5 @@ is out of date. Every tool is also a CLI verb (`teamcraft --help`). Dotted names
 | `team_kv_check` | Compare each employee's gross with the KV minimum valid on a date, pro rata to weekly hours. | - | `date` |
 | `team_timesheet` | Monthly working-time record (AZG section 26): per day start/end/break/worked/absence/holiday/AZG flags, worked vs target. path writes a semicolon CSV. | `employee`, `month` | `path` |
 | `team_capacity` | Available hours per employee for an ISO week after holidays and approved leave. emit=true sends capacity.changed to taskcraft. | - | `emit`, `week` |
+| `team_drain_inbox` | Open one employee per hirecraft candidate.hired event. The code is the candidate id reduced to 1-8 letters or digits. Salary is not copied. A repeated candidate is skipped. A payload without candidate_id or name is rejected. | - | - |
 | `team_demo_seed` | Fill an EMPTY database with a labelled demo team, fictional KV table and deliberate AZG findings. | - | - |

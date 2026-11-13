@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 - 2026-11-13
+
+- A `candidate.hired` event from hirecraft opens one employee. It does not copy a wage.
+
 ## 0.3.0 - 2026-11-12
 
 - Menu bar per the craft menu bar standard: shared File / Edit / View / Window / Help from `craft-biz-ui` (switch-on-hover, Help suite: palette, shortcuts F1, project docs, licenses, about), teamcraft's Insert, Modify and Commands, plus KV import and timesheet CSV export in File. Items act on the selected employee; 18 tool-backed items.
