@@ -6,6 +6,16 @@
 ![ArtCraft harness](https://img.shields.io/badge/ArtCraft-harness-green)
 ![SQLite](https://img.shields.io/badge/sqlite-local-lightgrey?logo=sqlite)
 
+## Install
+
+Tell Cursor, Claude, Antigravity, or OpenCode: **Install this.**
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\install-craft.ps1
+```
+
+Installs the Windows app, the CLI, and the MCP bundle.
+
 Working time and leave for a small Austrian team, with Arbeitszeitgesetz checks. One SQLite file, one binary that is both CLI and MCP server. Part of the back-office craft suite. **Not payroll**: no Lohnverrechnung, SV/LSt or ELDA.
 
 Status: **v0.3.0** (store + CLI + MCP + desktop window with the craft menu bar and Help suite, tested). Synthetic demo data only; not checked by a labour lawyer or Steuerberater.
