@@ -31,11 +31,21 @@ Core (since v0.1.0):
 - AZG engine: 10 h warning, 12 h, 60 h/week, 48 h average over 17 weeks, 30 min break above 6 h, 11 h rest; findings recorded, cleared but kept.
 - Leave in half-days against Austrian public holidays, pro rata entitlement, adjustments, approval gate, sick leave without reason.
 - KV import and pro rata check; monthly timesheet CSV with target and balance; weekly capacity sent to taskcraft (verified end to end).
-- 26 MCP tools ([TOOLS.md](TOOLS.md), generated and test-checked). `team_drain_inbox` opens one employee from a hire. It does not copy a salary.
+- 26 MCP tools ([TOOLS.md](TOOLS.md), generated and test-checked). `team_drain_inbox` opens one employee from a hire. It does not copy a salary. The stored person is code, name, weekly minutes, leave, start date, optional KV and monthly gross. There is no photo, SVNR, address, position, or work description.
+
+## Planned: Mitarbeiterkarte (not built)
+
+Specified 2026-11-16 with SetupCraft. The permanent employee page lives here. HireCraft keeps the candidate pane for people hired after go-live. Spec: `mcp-central-docs/projects/setupcraft/PRD.md`.
+
+- One page per person: legal name, photo, birth date, SVNR, address, email, phone, hire date, position, department, current-work description with a short dated history, weekly hours, KV and group, employment kind, probation end, monthly gross in cents, employee IBAN, 13th/14th flag, source `onboarding` or `hirecraft`.
+- Complete when photo, SVNR, address, hire date, position, and current-work text are present.
+- Founding staff arrive from SetupCraft `company.apply`, source `onboarding`. They do not pass through HireCraft.
+- A later hire arrives from a richer `candidate.hired` (chosen start date, position, work text, email, offered gross stored as monthly gross). The card stays incomplete until photo, SVNR, and address are filled. Wage is stored. Tax is not calculated here.
+- A Geschaeftsfuehrer without an ASVG wage is not a team card (`craft-biz` `is_team_member`). No timesheet, no later Lohnverrechnung.
 
 ## Boundaries
 
-- No Lohnverrechnung, SV/LSt, ELDA, payslips.
+- No Lohnverrechnung, SV/LSt, ELDA, payslips. Those are the later `lohncraft`, which will read this card and a locked month. Filing stays with the Buchhaltungsfirma until that project says otherwise.
 - No health data: sick leave stores day counts only.
 - No KV figures shipped; the user imports and owns the table.
 - Rules are the general AZG; not a substitute for advice from a labour lawyer or payroll office.
@@ -55,9 +65,10 @@ Core (since v0.1.0):
 
 ## Next
 
-1. Labour-law review; Gleitzeit as an opt-in profile.
-2. Timesheet PDF via pdfcraft.
-3. contractcraft / payroll-office export once the AZG rules are reviewed.
+1. Mitarbeiterkarte as specified above, including the richer hire drain that stores monthly gross and a chosen start date.
+2. Labour-law review; Gleitzeit as an opt-in profile.
+3. Timesheet PDF via pdfcraft.
+4. `lohncraft` reads the completed card. TeamCraft itself stays time, leave, and the person record.
 
 ## UI/UX Architecture & Menu Bar Standard
 

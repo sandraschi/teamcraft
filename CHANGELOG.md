@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased - 2026-11-16
+
+- Docs only. The Mitarbeiterkarte (photo, personal data, hire date, position, current-work text, payroll inputs) is specified in `docs/PRD.md` and in `mcp-central-docs/projects/setupcraft/PRD.md`. The window does not have that page yet.
+- A `candidate.hired` event still opens a thin employee and still does not copy a wage. Founding staff will be written by SetupCraft with source `onboarding`. Later hires stay on the HireCraft path.
+
 ## 0.3.1 - 2026-11-13
 
 - A `candidate.hired` event from hirecraft opens one employee. It does not copy a wage.
