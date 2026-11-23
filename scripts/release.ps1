@@ -126,7 +126,7 @@ if ($cfg.CliBin -and @($cfg.CliSmoke).Count -gt 0) {
 }
 if ($cfg.McpBin -and ($cfg.Mcpb -or @($cfg.McpSmoke).Count -gt 0)) {
     $mcpSmokeArgs = if (@($cfg.McpSmoke).Count -gt 0) { $cfg.McpSmoke } else { $cfg.McpArgs }
-    $init = '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"release-smoke","version":"0"}}}'
+    $init = '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2026-07-28","capabilities":{},"clientInfo":{"name":"release-smoke","version":"0"}}}'
     $resp = $init | & (Join-Path $binDir "$($cfg.McpBin).exe") @(Expand-CraftArgs $mcpSmokeArgs $smokeDb) 2>$null | Select-Object -First 1
     if ($resp -notmatch '"result"') { Fail "MCP initialize returned no result: $resp" }
     $smoked += 'MCP initialize'
